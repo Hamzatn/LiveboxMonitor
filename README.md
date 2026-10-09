@@ -1,856 +1,859 @@
-# ![Icone](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_AppIcon.png) LiveboxMonitor
+# ![Icon](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_AppIcon.png) LiveboxMonitor
 
-L'application [LiveboxMonitor](https://github.com/p-dor/LiveboxMonitor) est une interface graphique dynamique pour :
-- Contrôler les appareils qui se connectent à la Livebox et détecter rapidement les intrusions,
-- Enregistrer le journal d'activités et recevoir des notifications par email aux connexions ou déconnexions,
-- Obtenir des statistiques détaillées de trafic, par appareil, ou globalement,
-- Visualiser graphiquement les statistiques de trafic sur plusieurs jours, par appareil ou par interface,
-- Obtenir beaucoup de détails sur la Livebox elle-même et contrôler la qualité de sa ligne fibre,
-- Avoir beaucoup de détails sur les appareils qui se connectent (actifs ou non),
-- Lire le journal des événements d'un appareil donné,
-- Contrôler de manière fine les réglages du serveur DHCP, des règles NAT/PAT, du DynDNS, de la DMZ, et de la table de routage,
-- Configurer le réseau Wifi et contrôler son état global,
-- Contrôler les appels téléphoniques ainsi que la liste des contacts,
-- Contrôler un ou plusieurs répéteurs Wifi Orange connectés,
-- Contrôler un ou plusieurs décodeurs TV Orange connectés.
+[LiveboxMonitor](https://github.com/p-dor/LiveboxMonitor) is a dynamic graphical interface that lets you:
+- Monitor devices connecting to the Livebox and quickly detect intrusions.
+- Record an activity log and receive email notifications when devices connect or disconnect.
+- Get detailed traffic statistics for individual devices or the network as a whole.
+- View traffic statistics graphs covering multiple days, by device or interface.
+- Get extensive information about the Livebox itself and monitor the quality of its fibre connection.
+- View detailed information about connected devices, whether active or inactive.
+- Read the event log for a specific device.
+- Fine-tune the DHCP server, NAT/PAT rules, DynDNS, DMZ, and routing table.
+- Configure the Wi-Fi network and monitor its overall status.
+- Monitor telephone calls and the contact list.
+- Monitor one or more connected Orange Wi-Fi repeaters.
+- Monitor one or more connected Orange TV decoders.
 
-**AVERTISSEMENT** : Les architectures étant totalement différentes, **le logiciel n'est pas compatible avec la "Livebox Pro 4"**.
+**WARNING:** Because their architectures are completely different, **this software is not compatible with the "Livebox Pro 4"**.
 
-L'application est dynamique car elle réagit aux événements envoyés par la Livebox et les interprète.
+The application is dynamic because it reacts to and interprets events sent by the Livebox.
 
 ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_DeviceList.png)
 
 
-## Sections de cette documentation
+## Documentation contents
 1. [Installation](#install)
-2. [Configuration minimale](#minimalconfig)
-3. [À propos de l'auteur](#author)
+2. [Minimum requirements](#minimalconfig)
+3. [About the author](#author)
 4. [Discussion](#discussion)
-4. [Supporter le projet](#support)
-5. [Prise en main](#handling)
-6. [Profils](#profiles)
-7. [Options de ligne de commande](#commandline)
-8. [Accès à distance](#remoteaccess)
-9. [Configuration](#configuration)
-10. [Linux](#linux)
-11. [Appareils - Liste des appareils connectés](#devicelist)
-12. [Stats/Infos Livebox - Statistiques de trafic et infos avancées de la Livebox](#infos)
-13. [Graphes - Courbes de trafic par interface et par appareil](#graphs)
-14. [Infos Appareil - Informations détaillées pour chaque appareil connu](#deviceinfos)
-15. [Événements - Liste des événements reçus pour chaque appareil connu](#events)
-16. [DHCP - Contrôle fin du serveur DHCP](#dhcp)
-17. [NAT/PAT - Règles de redirection de port et de protocole](#natpat)
-18. [Téléphone - Liste des appels téléphoniques / liste des contacts](#phone)
-19. [Actions - Boutons d'actions et de contrôle](#actions)
-20. [Onglets répéteurs Wifi](#repeaters)
-21. [Onglets décodeurs TV](#tvdecoders)
-22. [Gestion et personnalisation des icônes d'appareil](#icons)
-23. [Utiliser les APIs Livebox dans votre propre programme Python](#codingguide)
+5. [Support the project](#support)
+6. [Getting started](#handling)
+7. [Profiles](#profiles)
+8. [Command-line options](#commandline)
+9. [Remote access](#remoteaccess)
+10. [Configuration](#configuration)
+11. [Linux](#linux)
+12. [Devices — Connected device list](#devicelist)
+13. [Livebox stats/info — Traffic statistics and advanced Livebox information](#infos)
+14. [Graphs — Traffic graphs by interface and device](#graphs)
+15. [Device info — Detailed information about each known device](#deviceinfos)
+16. [Events — Events received for each known device](#events)
+17. [DHCP — Fine-grained DHCP server control](#dhcp)
+18. [NAT/PAT — Port and protocol forwarding rules](#natpat)
+19. [Phone — Call history and contacts](#phone)
+20. [Actions — Action and control buttons](#actions)
+21. [Wi-Fi repeater tabs](#repeaters)
+22. [TV decoder tabs](#tvdecoders)
+23. [Managing and customizing device icons](#icons)
+24. [Using Livebox APIs in your own Python program](#codingguide)
 
 
 ## Installation <a id="install"></a>
 
-L'application est écrite en [Python 3.11](https://www.python.org/downloads/) et est basée sur [PyQt6](https://pypi.org/project/PyQt6/) pour l'interface graphique et sur [PyQtGraph](https://www.pyqtgraph.org/) pour les graphes statistiques.
+The application is written in [Python 3.11](https://www.python.org/downloads/). It uses [PyQt6](https://pypi.org/project/PyQt6/) for its graphical interface and [PyQtGraph](https://www.pyqtgraph.org/) for statistical graphs.
 
-Les autres dépendances sont `requests`, `cryptography`, `wakepy`, `xmltodict` et `python-dateutil`.
+The other dependencies are `requests`, `cryptography`, `wakepy`, `xmltodict`, and `python-dateutil`.
 
-**Note** : Le module `LmSession` est une adaptation du package [sysbus](https://github.com/rene-d/sysbus) pour les Livebox 5, 6 & 7. Le support des événements a aussi été rajouté.
+**Note:** The `LmSession` module adapts the [sysbus](https://github.com/rene-d/sysbus) package for Livebox 5, 6, and 7. Event support has also been added.
 
-### Téléchargement - version 1.7 (26/04/2026)
+### Download — version 1.7 (26/04/2026)
 
-Des programmes autonomes construits avec [PyInstaller](https://pyinstaller.org) sont disponibles pour les plateformes Windows & MacOS :
-- Windows : [Télécharger](https://github.com/p-dor/LiveboxMonitor/releases/download/1.7/LiveboxMonitor.exe)
-- Windows avec console : [Télécharger](https://github.com/p-dor/LiveboxMonitor/releases/download/1.7/LiveboxMonitor_Console.exe)
-- MacOS (Intel) : [Télécharger](https://github.com/p-dor/LiveboxMonitor/releases/download/1.7/LiveboxMonitor.dmg)
-- MacOS (Intel) avec console : [Télécharger](https://github.com/p-dor/LiveboxMonitor/releases/download/1.7/LiveboxMonitor_Console.dmg)
-- MacOS (Silicon) : [Télécharger](https://github.com/p-dor/LiveboxMonitor/releases/download/1.7/LiveboxMonitor_Silicon.dmg)
-- MacOS (Silicon) avec console : [Télécharger](https://github.com/p-dor/LiveboxMonitor/releases/download/1.7/LiveboxMonitor_Silicon_Console.dmg)
+Standalone programs built with [PyInstaller](https://pyinstaller.org) are available for Windows and macOS:
+- Windows: [Download](https://github.com/p-dor/LiveboxMonitor/releases/download/1.7/LiveboxMonitor.exe)
+- Windows with console: [Download](https://github.com/p-dor/LiveboxMonitor/releases/download/1.7/LiveboxMonitor_Console.exe)
+- macOS (Intel): [Download](https://github.com/p-dor/LiveboxMonitor/releases/download/1.7/LiveboxMonitor.dmg)
+- macOS (Intel) with console: [Download](https://github.com/p-dor/LiveboxMonitor/releases/download/1.7/LiveboxMonitor_Console.dmg)
+- macOS (Apple silicon): [Download](https://github.com/p-dor/LiveboxMonitor/releases/download/1.7/LiveboxMonitor_Silicon.dmg)
+- macOS (Apple silicon) with console: [Download](https://github.com/p-dor/LiveboxMonitor/releases/download/1.7/LiveboxMonitor_Silicon_Console.dmg)
 
-Nouveautés de cette version et historique des versions : [ici](https://github.com/p-dor/LiveboxMonitor/blob/main/docs/ReleaseHistory.md) ou [ici](https://github.com/p-dor/LiveboxMonitor/releases).
+What's new in this version and the release history: [here](https://github.com/p-dor/LiveboxMonitor/blob/main/docs/ReleaseHistory.md) or [here](https://github.com/p-dor/LiveboxMonitor/releases).
 
 
-### PyPI - [ici](https://pypi.org/project/LiveboxMonitor/)
+### PyPI — [here](https://pypi.org/project/LiveboxMonitor/)
 
-Installation :  
+Installation:
 ```
     pip install LiveboxMonitor
 ```
 
-Mise à jour :  
+Upgrade:
 ```
     pip install --upgrade LiveboxMonitor
 ```
 
-Lancement :  
+Launch:
 ```
     LiveboxMonitor
 ```
 
 
-### Utilisation directe via les sources
+### Running directly from source
 
-Installation :  
+Installation:
 ```
-    git clone https://github.com/p-dor/LiveboxMonitor.git  
-    cd LiveboxMonitor  
+    git clone https://github.com/p-dor/LiveboxMonitor.git
+    cd LiveboxMonitor
     pip install -r requirements.txt
 ```
 
-Lancement : 
-``` 
+Launch:
+```
     cd src\LiveboxMonitor
     python3 lbm.py
 ```
 
-Ou via un virtualenv.
+Or use a virtual environment.
 
-Installation :  
+Installation:
 ```
     git clone https://github.com/p-dor/LiveboxMonitor.git
     cd LiveboxMonitor
     virtualenv -p python3 .venv
     source .venv/bin/activate
     pip install -r requirements.txt
-``` 
+```
 
-Lancement : 
-``` 
+Launch:
+```
     cd src\LiveboxMonitor
     source .venv/bin/activate
     python3 lbm.py
 ```
 
 
-## Configuration minimale <a id="minimalconfig"></a>
+## Minimum requirements <a id="minimalconfig"></a>
 
-Étant donné les dépendances documentées de [Python 3.11](https://www.python.org/downloads/release/python-3110/), [PyInstaller](https://pyinstaller.org/en/stable/requirements.html) et de [PyQt6](https://www.qt.io/product/qt6/technical-specifications) la configuration minimale requise pour faire tourner cette application est :
-- Windows : **Windows 10** ou plus récent.
-- MacOS : **MacOS 13 (Ventura)** ou plus récent.
+Based on the documented requirements for [Python 3.11](https://www.python.org/downloads/release/python-3110/), [PyInstaller](https://pyinstaller.org/en/stable/requirements.html), and [PyQt6](https://www.qt.io/product/qt6/technical-specifications), the minimum requirements for running this application are:
+- Windows: **Windows 10** or later.
+- macOS: **macOS 13 (Ventura)** or later.
 
 
-## À propos de l'auteur <a id="author"></a>
+## About the author <a id="author"></a>
 
-L'auteur de ce logiciel est un professionnel de l'informatique n'ayant aucun lien avec Orange. Ce logiciel n'est donc en rien un produit d'Orange.  
-Aucune documentation officielle des APIs de la Livebox n'étant disponible, l'élaboration a été effectuée à partir de techniques classiques de rétro-ingénierie (reverse engineering), et l'ensemble du projet sur le temps libre de l'auteur.
+The author of this software is an IT professional with no connection to Orange. This software is therefore in no way an Orange product.
+Because no official documentation for the Livebox APIs is available, the software was developed using conventional reverse-engineering techniques, and the author has worked on the entire project in their spare time.
 
 
 ## Discussion <a id="discussion"></a>
 
-Si vous avez un compte GitHub le [forum de discussion](https://github.com/p-dor/LiveboxMonitor/discussions) est actif.
-Un [fil de discussion](https://lafibre.info/orange-les-news/controler-son-reseau-livebox-5-ou-6/) est aussi actif sur le forum [lafibre.info](https://lafibre.info). Il est possible d'y poster vos commentaires, résultats de tests ou de faire des demandes de fonctionnalités.
+If you have a GitHub account, the [discussion forum](https://github.com/p-dor/LiveboxMonitor/discussions) is active.
+A [discussion thread](https://lafibre.info/orange-les-news/controler-son-reseau-livebox-5-ou-6/) is also active on the [lafibre.info](https://lafibre.info) forum. You can post comments, test results, or feature requests there.
 
 
-## Supporter le projet <a id="support"></a>
+## Support the project <a id="support"></a>
 
-Vous pouvez [effectuer un don](https://www.paypal.com/donate/?hosted_button_id=U7CLQM3WGTUEJ&locale.x=fr_FR) à l'auteur pour l'encourager à faire évoluer le projet.  
+You can [make a donation](https://www.paypal.com/donate/?hosted_button_id=U7CLQM3WGTUEJ&locale.x=fr_FR) to encourage the author to continue developing the project.
 [![](https://www.paypalobjects.com/fr_FR/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=U7CLQM3WGTUEJ&locale.x=fr_FR)
 
 
-## Prise en main <a id="handling"></a>
+## Getting started <a id="handling"></a>
 
-L'interface se veut intuitive mais il vaut mieux se reporter à la documentation pour comprendre certains comportements ou représentations.
-Les points importants à comprendre avant de commencer :
-- La connexion s'établit avec exactement les mêmes informations que pour accéder à l'interface Web de configuration de la Livebox. Pour l'URL il faut essayer http://livebox.home/, http://livebox/ ou http://192.168.1.1/. Pour l'utilisateur il faut laisser à la valeur par défaut `admin`. Et pour le mot de passe c'est soit ce que vous avez indiqué vous-même soit le mot de passe d'origine. Plus d'informations [ici pour la Livebox 5](https://assistance.orange.fr/livebox-modem/toutes-les-livebox-et-modems/installer-et-utiliser/piloter-et-parametrer-votre-materiel/l-interface-de-configuration/livebox-5-acceder-a-l-interface-de-configuration_292471-827404), ou [ici pour la Livebox 6](https://assistance.orange.fr/livebox-modem/toutes-les-livebox-et-modems/installer-et-utiliser/piloter-et-parametrer-votre-materiel/l-interface-de-configuration/livebox-6-acceder-a-l-interface-de-configuration_363963-897414).
-- Il est normal que lors du premier lancement de l'application tous les appareils soient marqués comme inconnus (**INCONNU** en rouge). En effet un des buts de ce programme est d'identifier rapidement des appareils inconnus connectés sur le réseau grâce à une base de noms locale (le fichier `MacAddrTable.txt`). Il faut donc commencer par nommer chaque appareil que vous jugez légitime grâce au bouton `Assigner Nom...` de l'onglet `Infos Appareil`. Cette base locale constituera la référence de confiance de tous les appareils légitimes sur votre réseau. Le bouton `Assigner Noms...` de l'onglet `Appareils` vous permettra aussi de facilement assigner le même nom que celui qui a été donné à la Livebox automatiquement pour tous vos appareils.
-- Il est normal que les statistiques réseau apparaissent et disparaissent. En effet le programme rafraîchit ces statistiques toutes les 3 secondes par défaut (ou toutes les 30 secondes dans certains cas), et si d'un rafraîchissement à l'autre il n'y a pas eu de transfert la case devient vide. Ce choix a été fait pour permettre de mieux visualiser les cases non vides, là où il se passe quelque chose.
-- Tous les onglets peuvent être déplacés à la souris pour être mis dans l'ordre qui vous convient. Cet ordre sera restauré au prochain lancement du programme.
-- Toutes les colonnes dans le programme sont redimensionnables à la souris sauf certaines qui s'élargissent dynamiquement en fonction de la taille de la fenêtre. Donc, en fonction de la situation, vous pouvez soit redimensionner la colonne soit la fenêtre avec la souris pour ajuster la largeur d'une colonne.
-- On peut copier la valeur de n'importe quelle cellule de liste dans le presse-papiers. Pour cela il suffit de cliquer sur la cellule et de taper Ctrl-C.
-- Le contenu de toutes les listes du programme, y compris celles dans les dialogues, peut être exporté dans un fichier au format CSV exploitable par n'importe quel tableur (type Excel). Il suffit d'un clic droit sur la liste, de sélectionner "Export...", et de choisir ses options et colonnes à exporter.
-- Le programme dispose d'une barre de statut en bas de la fenêtre. Elle affiche sur la gauche des tâches en cours et sur la droite le nom du profil en cours (voir la section **Profils** ci-dessous). Un clic sur le nom de profil affichera la fenêtre pour en changer.
-- Des **tooltips** sont disponibles dans l'interface pour vous aider à vous passer de la documentation.
+The interface is designed to be intuitive, but it is worth consulting the documentation to understand some of its behaviours and displays.
+Here are the important points to understand before getting started:
+- Connect using the same credentials you use to access the Livebox web configuration interface. For the URL, try `http://livebox.home/`, `http://livebox/`, or `http://192.168.1.1/`. Leave the username at its default value, `admin`. For the password, use either the one you set yourself or the original password. More information is available [here for Livebox 5](https://assistance.orange.fr/livebox-modem/toutes-les-livebox-et-modems/installer-et-utiliser/piloter-et-parametrer-votre-materiel/l-interface-de-configuration/livebox-5-acceder-a-l-interface-de-configuration_292471-827404) and [here for Livebox 6](https://assistance.orange.fr/livebox-modem/toutes-les-livebox-et-modems/installer-et-utiliser/piloter-et-parametrer-votre-materiel/l-interface-de-configuration/livebox-6-acceder-a-l-interface-de-configuration_363963-897414).
+- When you first launch the application, it is normal for all devices to be marked as unknown (**UNKNOWN**, in red). One purpose of the program is to quickly identify unknown devices connected to the network using a local name database (the `MacAddrTable.txt` file). Start by naming each device you consider legitimate using the `Assign Name...` button on the `Device Info` tab. This local database becomes the trusted reference for legitimate devices on your network. The `Assign Names...` button on the `Devices` tab can also assign to all your devices the same names that the Livebox assigned to them automatically.
+- It is normal for network statistics to appear and disappear. By default, the program refreshes these statistics every 3 seconds (or every 30 seconds in some cases). If no transfer occurs between refreshes, the cell is left blank. This makes it easier to see non-empty cells, where activity is occurring.
+- You can drag tabs with the mouse to arrange them in your preferred order. The order is restored the next time you launch the program.
+- All columns in the program can be resized with the mouse, except for certain columns that expand dynamically according to the window size. Depending on the situation, you can resize either the column or the window to adjust the column width.
+- You can copy the value of any cell in a list to the clipboard: click the cell and press Ctrl+C.
+- All lists in the program, including lists in dialogs, can be exported to a CSV file that can be opened in any spreadsheet application (such as Excel). Right-click the list, select `Export...`, and choose the options and columns to export.
+- A status bar appears at the bottom of the window. It shows ongoing tasks on the left and the current profile name on the right (see **Profiles** below). Clicking the profile name opens the dialog for changing it.
+- **Tooltips** are available throughout the interface to help you use the application without consulting the documentation.
 
-**Attention à propos des statistiques de trafic** : il ne faut pas trop prendre les débits réseau affichés (par appareil ou par interface) au pied de la lettre et c'est probablement pourquoi Orange a choisi de ne plus les exposer. Si vous observez des incohérences il ne s'agit pas d'un bug du logiciel car il se contente d'afficher les données qui remontent de la Livebox, il n'y a rien qu'on puisse faire hélas. Les écarts avec la réalité semblent dépendre du constructeur de l'appareil mesuré. Par exemple avec tous les appareils iOS (iPhone, iPad, ...) les débits semblent démesurés, mais pour certains autres cela semble parfaitement correspondre à la réalité.
-
-
-## Profils <a id="profiles"></a>
-Le programme supporte de pouvoir gérer plusieurs Livebox à l'aide de profils différents. Chaque profil doit avoir un nom unique. Par défaut un profil principal est créé automatiquement, mais il est possible d'en créer d'autres soit au démarrage du programme dans la fenêtre de sélection de profils soit dans les préférences du programme.  
-Si plusieurs profils sont configurés le nom du profil en cours est affiché dans le titre de la fenêtre principale entre crochets.  
-Plusieurs informations sont associées à chaque profil, telle que l'URL de la Livebox, son mot de passe, etc. Le programme associe aussi automatiquement l'adresse physique (MAC) de la Livebox sur laquelle la connexion s'est effectuée.
-
-Que se passe-t-il au lancement du programme ?
-- Si la touche `Ctrl` est enfoncée le programme affiche un dialogue pour sélectionner le profil à utiliser.
-- Sinon, si un profil par défaut est configuré, il sera sélectionné.
-- Sinon, le programme parcourt la liste des profils et cherche si une Livebox avec la même adresse physique que celle associée au profil répond à l'URL du profil. Le premier profil qui répond à ces critères est sélectionné.
-- Si aucun profil trouvé, le programme affiche un dialogue pour sélectionner le profil à utiliser.
-
-Le dialogue de sélection de profils vous prévient si vous tentez d'utiliser un profil pour une Livebox différente de celle avec laquelle il est normalement associé. Si vous validez le dialogue, le profil sera mis à jour pour être associé à cette nouvelle Livebox. Le dialogue de sélection de profils vous permet aussi de créer un nouveau profil si aucun dans la liste ne convient.
+**Caution about traffic statistics:** Do not take the displayed network throughput figures (per device or interface) too literally. This is probably why Orange stopped exposing them. If you see inconsistencies, they are not necessarily a software bug: the program simply displays the data returned by the Livebox, and unfortunately there is nothing it can do to correct it. Differences from reality seem to depend on the manufacturer of the measured device. For example, throughput figures for iOS devices (iPhone, iPad, etc.) seem exaggerated, while for some other devices they appear to match reality quite well.
 
 
-## Options de ligne de commande <a id="commandline"></a>
+## Profiles <a id="profiles"></a>
+
+The program supports managing several Liveboxes using separate profiles. Each profile must have a unique name. A main profile is created automatically by default, but you can create additional profiles either at startup in the profile-selection dialog or in the program preferences.
+If multiple profiles are configured, the current profile name appears in square brackets in the main window's title bar.
+Each profile stores information such as the Livebox URL and password. The program also automatically associates the physical (MAC) address of the Livebox used for the connection with that profile.
+
+What happens when the program starts?
+- If you hold down `Ctrl`, the program displays a dialog for selecting the profile to use.
+- Otherwise, if a default profile is configured, it is selected.
+- Otherwise, the program goes through the profiles and checks whether a Livebox with the same physical address as the one associated with a profile responds at that profile's URL. The first profile that meets these criteria is selected.
+- If no profile is found, the program displays a dialog for selecting one.
+
+The profile-selection dialog warns you if you try to use a profile with a different Livebox from the one it is normally associated with. If you confirm, the profile will be updated to associate it with the new Livebox. The dialog also lets you create a new profile if none of the existing profiles is suitable.
+
+
+## Command-line options <a id="commandline"></a>
 
 - `--redir` `-r`  
-Permet de rediriger une URL configurée / utilisée par le programme pour se connecter à la Livebox ou à un répéteur Wifi.
-Le format est `url1=url2`.  
-Exemple : `LiveboxMonitor --redir http://livebox/=http://myproxy:2080`  
-Avec cette option le programme utilisera plutôt l'URL 'http://myproxy:2080/' pour se connecter à 'http://livebox/'.  
-Cette option peut être utilisée plusieurs fois sur la même ligne.
+  Redirects a URL configured or used by the program to connect to the Livebox or a Wi-Fi repeater.
+  The format is `url1=url2`.  
+  Example: `LiveboxMonitor --redir http://livebox/=http://myproxy:2080`  
+  With this option, the program uses `http://myproxy:2080/` to connect to `http://livebox/` instead.  
+  This option can be used more than once on the same command line.
 
 
-## Accès à distance <a id="remoteaccess"></a>
-Il est possible d'utiliser le programme à distance si l'accès à distance de la Livebox est activé.
-Dans la configuration de la Livebox, cliquez sur la tuile "Mon accès à distance". Activez l'accès, configurez un nom, un mot de passe, et un numéro de port personnalisé. Vous pouvez aussi en profiter pour activer un DynDNS pour éviter de changer l'URL à chaque fois que votre IP internet change.  
+## Remote access <a id="remoteaccess"></a>
 
-Votre URL de connexion devient alors quelque chose comme ceci : https://monIP:monPort/  
-Ou alors si vous avez configuré un DynDNS : https://monNomDeDomaine.com:monPort/  
-Évidement configurez aussi le nom et le mot de passe de connexion en fonction.
+You can use the program remotely if remote access is enabled on the Livebox.
+In the Livebox configuration interface, click the **My remote access** tile. Enable access, configure a username, password, and custom port number. You can also enable DynDNS to avoid having to change the URL whenever your public IP address changes.
+
+Your connection URL will then look something like this: `https://myIP:myPort/`.
+If you have configured DynDNS, it will look something like this: `https://myDomainName.com:myPort/`.
+Make sure the connection username and password are configured accordingly.
 
 
 ## Configuration <a id="configuration"></a>
 
-### Répertoire de configuration
-- Si le programme est lancé par son code source le répertoire de configuration est le même que celui contenant le fichier source de lancement `lbm.py`.
+### Configuration directory
+- If the program is launched from source code, the configuration directory is the same directory that contains the launch source file, `lbm.py`.
+- If you use the PyPI package (installed with `pip`) or a program built with [PyInstaller](https://pyinstaller.org), the configuration directory is located in the system's standard application-data location:
+    - Windows: `%APPDATA%\LiveboxMonitor`
+    - macOS: `~/Library/Application Support/LiveboxMonitor`
 
-- Si le package PyPI (installation avec la commande 'pip') ou les programmes construits avec [PyInstaller](https://pyinstaller.org) sont utilisés, le répertoire de configuration se trouve dans les répertoires standards du système :
-    - Windows : `%APPDATA%\LiveboxMonitor`
-    - MacOS : `~/Library/Application Support/LiveboxMonitor`
+The program automatically creates three files in its configuration directory:
+- `Key.txt`: a unique encryption key generated to encrypt all passwords. This key is itself encrypted using a key calculated by the program from unique characteristics of your PC (including its name). If something significant about your PC changes (the processor, operating system, name, etc.), this key is regenerated automatically and all passwords must be entered again.
+- `Config.txt`: contains all application settings (JSON format).
+- `MacAddrTable.txt`: maps MAC addresses to device names (JSON format).
 
-Le programme crée automatiquement dans son répertoire de configuration trois fichiers :
-- `Key.txt` : clé de chiffrement unique générée pour crypter tous les mots de passe. Cette clé est elle-même cryptée avec une clé qui est calculée par le programme à partir des caractéristiques uniques de votre PC (y compris son nom). Si quelque chose de significatif change sur votre PC (le processeur, l'OS, son nom, etc), cette clé sera régénérée automatiquement et tous vos mots de passe devront être ressaisis.
-- `Config.txt` : contient tous les paramètres de l'application (format JSON).
-- `MacAddrTable.txt` : contient la correspondance entre les adresses MAC et les noms d'appareil (format JSON).
+### The Config.txt file
 
-### Le fichier Config.txt
+This JSON file is managed automatically by the application and normally should not need to be edited. The main settings can be changed using the `Preferences...` button on the `Actions` tab.
+Note the following:
+- Passwords are stored encrypted using the encryption key in `Key.txt`.
+- The `Repeaters` key is generated automatically if different passwords are used for one or more connected Orange Wi-Fi repeaters. This setting is also in JSON format. It uses repeater MAC addresses as keys and stores the `User` and `Password` values for each repeater.
 
-Ce fichier JSON est géré automatiquement par l'application et il ne devrait pas être nécessaire de l'éditer. Les réglages principaux se font via le bouton `Préférences...` de l'onglet `Actions`.  
-À savoir :  
-- Les mots de passe y sont stockés cryptés grâce à la clé de chiffrement du fichier `Key.txt`.
-- La clé `Repeaters` est générée automatiquement par le programme si des mots de passe différents sont utilisés pour le ou les répéteurs Wifi Orange connectés. La structure de ce paramètre est aussi au format JSON, utilise pour clé les adresses MAC des répéteurs, et référence pour chaque répéteur les valeurs 'User' & 'Password'.
+### The MacAddrTable.txt file
 
-### Le fichier MacAddrTable.txt
+This JSON file is managed automatically by the application and normally should not need to be edited.
+The keys are device MAC addresses, and the values are the assigned names.
+Any detected device whose MAC address is not listed will be displayed as **UNKNOWN** in red. This feature is particularly useful for detecting new devices or possible intrusion attempts.
 
-Ce fichier JSON est géré automatiquement par l'application et il ne devrait pas être nécessaire de l'éditer.
-Les clés correspondent aux adresses MAC des appareils et les valeurs au nom attribué.
-Tout appareil détecté dont l'adresse MAC n'est pas répertoriée sera affiché comme 'INCONNU' en rouge. Cette fonctionnalité est surtout utile pour détecter les nouveaux appareils ou des tentatives d'intrusions.
+Why use a local name database when the Livebox also stores device names?
+- Because the Livebox "forgets" any device that has not connected for more than a month.
+- Because the Livebox sometimes unexpectedly loses names for certain devices. Wi-Fi repeaters are one example.
+A local name file helps you determine whether a device really is unknown.
 
-Pourquoi utiliser une base de noms locale alors que la Livebox stocke aussi des noms ?
-- Parce que la Livebox "oublie" tout appareil qui ne s'est pas connecté depuis plus d'un mois.
-- Parce que parfois la Livebox perd des noms de façon impromptue pour certains appareils. C'est le cas par exemple pour le nom des répéteurs Wifi.  
-Un fichier de noms local offre la garantie de savoir si un appareil est vraiment inconnu.
+### The SpamCalls.txt file
 
-### Le fichier SpamCalls.txt
-
-Ce fichier JSON est géré automatiquement par l'application et il ne devrait pas être nécessaire de l'éditer.
-Il contient tous les numéros de téléphone au format international identifiés comme indésirables. Les appels provenant de ces numéros sont automatiquement marqués comme "spam" dans l'onglet `Téléphone`.
+This JSON file is managed automatically by the application and normally should not need to be edited.
+It contains all phone numbers identified as unwanted, stored in international format. Calls from these numbers are automatically marked as "spam" on the `Phone` tab.
 
 
 ## Linux <a id="linux"></a>
-En cas d'utilisation d'un virtualenv, si des erreurs de plugin Qt apparaissent, rajoutez ces commandes pour l'installation :
+
+If you use a virtual environment and Qt plugin errors occur, add the following commands during installation:
 
 ```
     apt install qt6-base-dev
     apt install '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev
 ```
 
-En cas d'erreurs avec Wayland, il est possible de changer le moteur de rendu de Qt avec la variable d’environnement `QT_QPA_PLATFORM`.  
-Par exemple : `QT_QPA_PLATFORM=xcb python3 lbm.py` permet d'utiliser X Window directement (qui éventuellement sera rendu avec Xwayland mais cela fonctionne).
+If you encounter Wayland errors, you can change Qt's rendering backend using the `QT_QPA_PLATFORM` environment variable.
+For example, `QT_QPA_PLATFORM=xcb python3 lbm.py` uses X Window directly (which may be rendered through Xwayland, but this works).
 
-Une autre méthode consiste à supprimer la variable d’environnement `WAYLAND_DISPLAY` uniquement pour l’exécution du programme et pas de façon globale, pour ce faire : `env -u WAYLAND_DISPLAY python3 lbm.py`.
-
-
-## Appareils - Liste des appareils connectés <a id="devicelist"></a>
-
-### Liste
-La liste des appareils affiche les colonnes suivantes :
-- **T** : icône correspondant au type de l'appareil. Ce type peut être attribué ou changé via le bouton `Assigner Type...` de l'onglet `Infos Appareil`.
-- **Nom** : nom local de l'appareil. Ce nom peut être attribué, changé ou supprimé via le bouton `Assigner Nom...` de l'onglet `Infos Appareil`.
-- **Nom Livebox** : nom de l'appareil tel que paramétré dans la Livebox et visible dans l'interface Web de la Livebox. Ce nom peut être attribué, changé ou supprimé via le bouton `Assigner Nom...` de l'onglet `Infos Appareil`.
-- **MAC** : adresse MAC, aussi appelée adresse physique de l'appareil.
-- **IP** : adresse IP v4 de l'appareil sur le LAN. Cette adresse s'affiche en caractères gras si cette adresse est réservée pour cet appareil dans la configuration DHCP de la Livebox. Et elle s'affiche en rouge si l'adresse n'est pas atteignable sur le réseau (unreachable), typiquement lorsque l'appareil n'est pas actif.
-- **Accès** : point d'accès de l'appareil sur le réseau. D'abord le nom de l'appareil, c'est-à-dire la Livebox elle-même ou le nom d'un des répéteurs Wifi Orange connectés, et ensuite l'interface sur cet appareil. `Eth` signifie une des prises Ethernet suivi du numéro de prise. `Wifi` signifie une connexion Wifi suivi par la bande de connexion.
-- **A** : indique par une icône si l'appareil est actif ou non. Par défaut la liste est triée pour montrer d'abord les appareils actifs.
-- **Wifi** : qualité de la connexion Wifi.
-- **E** : indique par une icône avec un point d'exclamation ![Icone](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Exclamation.png) lorsqu'un événement est reçu pour cet appareil. La liste détaillée des événements, ainsi que le contenu des événements eux-mêmes, peuvent être consultés via l'onglet `Événements`.
-- **Rx** : nombre d'octets reçus par l'appareil depuis le dernier démarrage de la Livebox.
-- **Tx** : nombre d'octets envoyés par l'appareil depuis le dernier démarrage de la Livebox.
-- **TauxRx** : taux d'octets reçus par seconde par l'appareil dans les dernières 30 secondes si affiché en noir, dans les trois dernières secondes si affiché en bleu (fréquence réglable dans les préférences).
-- **TauxTx** : taux d'octets envoyés par seconde par l'appareil dans les dernières 30 secondes si affiché en noir, dans les trois dernières secondes si affiché en bleu (fréquence réglable dans les préférences).
-
-Les statistiques d'octets envoyés ou reçus par seconde sont calculées grâce aux statistiques envoyées par la Livebox sous forme d'événement toutes les 30 secondes par appareil. Cette résolution étant peu significative le programme utilise une autre interface disponible pour les appareils Wifi uniquement pour obtenir des statistiques toutes les trois secondes (option pour les activer/désactiver dans les préférences, ainsi que la fréquence). Ces dernières sont affichées en bleu.  
-Si une statistique s'affiche en rouge cela signifie que des erreurs de transfert ont été détectées par la Livebox.
-Les statistiques semblent parfois surprenantes, mais il s'agit d'une interprétation sans filtre de ce que renvoie la Livebox (il ne s'agit pas d'un défaut du programme).  
-**Note** : le trafic TV standard de la box TV UHD n'est pas comptabilisé dans les statistiques pour cet appareil. Par contre celui de services VOD tel que Netflix est bien comptabilisé.
+Another approach is to unset the `WAYLAND_DISPLAY` environment variable only for the program's execution, rather than globally. To do so, run `env -u WAYLAND_DISPLAY python3 lbm.py`.
 
 
-### Boutons
-L'onglet `Appareils` propose les boutons suivants :
-- **`Rafraîchir`** : permet de forcer le rafraîchissement de la liste des appareils, non seulement dans cet onglet mais aussi dans les onglets `Infos Appareil` et `Événements`. Utile par exemple si le programme est actif alors que l'ordinateur sort de veille : des événements ayant probablement été manqués par le programme, un rafraîchissement permettra de retrouver une vue à jour.
-- **`Assigner Noms...`** : permet d'assigner le même nom que celui qui a été donné à la Livebox automatiquement pour tous les appareils inconnus.
-- **`Infos Appareil`** : permet de basculer dans l'onglet `Infos Appareil` pour l'appareil sélectionné et de voir directement ses informations.
-- **`Événements Appareil`** : permet de basculer dans l'onglet `Événements` pour l'appareil sélectionné et de voir directement les événements reçus le concernant.
-- **`IPv6...`** : permet d'avoir le statut d'activation de l'IPv6, l'adresse IPv6 de la Livebox ainsi que son préfixe, et la liste des appareils connectés ou non ayant une ou plusieurs IPv6 assignées. Permet également de visualiser le mode de connexion et de contrôler le réglage CGNat.
-- **`DNS...`** : permet d'avoir la liste des noms DNS assignés aux appareils. Ces noms DNS peuvent être attribués, changés ou supprimés via le bouton `Assigner Nom...` de l'onglet `Infos Appareil`.
+## Devices — Connected device list <a id="devicelist"></a>
+
+### List
+The device list displays the following columns:
+- **T**: icon representing the device type. The type can be assigned or changed using the `Assign Type...` button on the `Device Info` tab.
+- **Name**: the device's local name. It can be assigned, changed, or removed using `Assign Name...` on the `Device Info` tab.
+- **Livebox Name**: the device name configured in the Livebox and shown in its web interface. It can be assigned, changed, or removed using `Assign Name...` on the `Device Info` tab.
+- **MAC**: the MAC address, also known as the device's physical address.
+- **IP**: the device's IPv4 address on the LAN. It appears in bold if it is reserved for this device in the Livebox DHCP configuration, and in red if it is unreachable on the network, typically when the device is inactive.
+- **Access**: the device's network access point. First, this shows the device name (the Livebox itself or the name of a connected Orange Wi-Fi repeater), followed by the interface on that device. `Eth` means one of the Ethernet ports followed by its port number. `Wifi` means a Wi-Fi connection followed by the connection band.
+- **A**: an icon indicating whether the device is active. By default, the list is sorted to show active devices first.
+- **Wi-Fi**: Wi-Fi connection quality.
+- **E**: an exclamation-mark icon ![Icon](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Exclamation.png) indicates that an event has been received for this device. The detailed event list and event contents can be viewed on the `Events` tab.
+- **Rx**: number of bytes received by the device since the Livebox last started.
+- **Tx**: number of bytes sent by the device since the Livebox last started.
+- **RateRx**: bytes received per second by the device over the last 30 seconds when shown in black, or over the last 3 seconds when shown in blue (the frequency can be changed in preferences).
+- **RateTx**: bytes sent per second by the device over the last 30 seconds when shown in black, or over the last 3 seconds when shown in blue (the frequency can be changed in preferences).
+
+The bytes-per-second statistics for received and sent traffic are calculated from statistics the Livebox sends as an event every 30 seconds per device. Because this resolution is not very meaningful, the program uses another available interface for Wi-Fi devices only to obtain statistics every 3 seconds. The preferences let you enable or disable these statistics and adjust their frequency. These more frequent statistics are displayed in blue.
+If a statistic is displayed in red, the Livebox has detected transfer errors.
+The statistics may sometimes look surprising, but they are an unfiltered interpretation of the data returned by the Livebox; this is not a program defect.
+**Note:** Standard TV traffic from the UHD TV decoder is not included in this device's statistics. However, traffic from VOD services such as Netflix is included.
+
+### Buttons
+The `Devices` tab provides the following buttons:
+- **`Refresh`**: forces the device list to refresh, not only on this tab but also on the `Device Info` and `Events` tabs. This is useful, for example, if the program is running while the computer wakes from sleep: some events may have been missed, and refreshing restores an up-to-date view.
+- **`Assign Names...`**: assigns the names automatically given by the Livebox to all unknown devices.
+- **`Device Info`**: switches to the `Device Info` tab for the selected device and displays its information.
+- **`Device Events`**: switches to the `Events` tab for the selected device and displays the events received for it.
+- **`IPv6...`**: displays the IPv6 enablement status, the Livebox IPv6 address and prefix, and a list of connected or disconnected devices with one or more assigned IPv6 addresses. It also displays the connection mode and lets you control the CGNAT setting.
+- **`DNS...`**: displays the DNS names assigned to devices. These names can be assigned, changed, or removed using `Assign Name...` on the `Device Info` tab.
 
 
-## Stats/Infos Livebox - Statistiques de trafic et infos avancées de la Livebox <a id="infos"></a>
+## Livebox stats/info — Traffic statistics and advanced Livebox information <a id="infos"></a>
 
 ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_LiveboxInfos.png)
 
-Les statistiques de trafic par interface sont affichées sous forme de liste en haut à gauche.
-Et toutes les informations sont accessibles par les boutons, chaque bouton remplissant la liste d'attributs sur la droite. Il est aussi possible d'exporter l'ensemble des informations dans un fichier.
+Traffic statistics for each interface appear in a list at the top left.
+All other information is available through buttons, each of which fills the attribute list on the right. You can also export all the information to a file.
 
-### Statistiques
+### Statistics
 
-Liste permettant de surveiller l'état du trafic :
-- **Nom** : nom de l'interface réseau. `Fiber` concerne tout le trafic WAN, c'est-à-dire externe entre la Livebox et internet. `LAN` tout le trafic interne transitant à travers la Livebox. Ensuite on dispose des statistiques par interface précise. Les interfaces `Guest` concernent le trafic du réseau Wifi invité, s'il est activé.
-- **Rx** : nombre d'octets reçus par l'interface. La fenêtre de temps de ce total n'est pas connue. S'affiche en rouge si des erreurs de transmission sont détectées. Attention ce compteur est circulaire et ne dépasse pas les 4 Go pour certaines interfaces. En effet pour d'autres, un compteur de plus haute résolution est interprété toutes les 30 secondes environ et qui vient remplacer au lancement du programme le compteur de base limité à 4 Go.
-- **Tx** : nombre d'octets envoyés par l'interface. La fenêtre de temps de ce total n'est pas connue. S'affiche en rouge si des erreurs de transmission sont détectées. Attention ce compteur est circulaire et ne dépasse pas les 4 Go pour certaines interfaces. En effet pour d'autres, un compteur de plus haute résolution est interprété toutes les 30 secondes environ et qui vient remplacer au lancement du programme le compteur de base limité à 4 Go.
-- **TauxRx** : taux d'octets reçus par seconde par l'interface dans les trois dernières secondes (fréquence réglable dans les préférences). S'affiche en rouge si des erreurs de transmission sont détectées. 
-- **TauxTx** : taux d'octets envoyés par seconde par l'interface dans les trois dernières secondes (fréquence réglable dans les préférences). S'affiche en rouge si des erreurs de transmission sont détectées.
+This list lets you monitor traffic:
+- **Name**: network interface name. `Fiber` covers all WAN traffic, meaning external traffic between the Livebox and the internet. `LAN` covers all internal traffic passing through the Livebox. Statistics are also available for individual interfaces. `Guest` interfaces show guest Wi-Fi traffic, if guest Wi-Fi is enabled.
+- **Rx**: number of bytes received by the interface. The time window covered by this total is unknown. It appears in red if transmission errors are detected. Note that for some interfaces this is a circular counter and cannot exceed 4 GB. For other interfaces, a higher-resolution counter is read roughly every 30 seconds and replaces the basic counter, which is limited to 4 GB, when the program starts.
+- **Tx**: number of bytes sent by the interface. The time window covered by this total is unknown. It appears in red if transmission errors are detected. Note that for some interfaces this is a circular counter and cannot exceed 4 GB. For other interfaces, a higher-resolution counter is read roughly every 30 seconds and replaces the basic counter, which is limited to 4 GB, when the program starts.
+- **RateRx**: bytes received per second by the interface over the last 3 seconds (the frequency can be changed in preferences). It appears in red if transmission errors are detected.
+- **RateTx**: bytes sent per second by the interface over the last 3 seconds (the frequency can be changed in preferences). It appears in red if transmission errors are detected.
 
-Si une statistique s'affiche en rouge cela signifie que des erreurs de transfert ont été détectées par la Livebox.
-Les statistiques semblent parfois surprenantes, mais il s'agit d'une interprétation sans filtre de ce que renvoie la Livebox (il ne s'agit pas d'un défaut du programme).
-**Note** : le trafic TV standard de la box TV UHD n'est pas comptabilisé dans ces statistiques. Par contre celui de services VOD tel que Netflix est bien comptabilisé.
+If a statistic is displayed in red, the Livebox has detected transfer errors.
+The statistics may sometimes look surprising, but they are an unfiltered interpretation of the data returned by the Livebox; this is not a program defect.
+**Note:** Standard TV traffic from the UHD TV decoder is not included in these statistics. However, traffic from VOD services such as Netflix is included.
 
-### Boutons
-L'onglet `Stats/Infos Livebox` propose les boutons suivants :
-- **`Infos Livebox`** : affiche les informations principales concernant la Livebox, telles que les versions de logiciels, l'adresse IP WAN, les services actifs, l'état de la mémoire, etc.
-- **`Infos Internet`** : affiche le type d'accès internet, les identifiants de connexion, les adresses IP v4 & v6, la date et heure de la dernière connexion, la bande passante de la connexion, la MTU, etc
-- **`Infos Wifi`** : affiche les informations générales sur la connectivité Wifi, et l'état de chaque accès y compris pour les accès invités. Pour chaque accès on dispose d'informations détaillées telles que le canal, le standard, la bande passante, la qualité, la bande, le nombre d'appareils connectés, etc.
-- **`Infos LAN`** : affiche les informations générales sur la connectivité LAN. Il s'agit des informations DHCP de base et pour chaque interface Ethernet on peut identifier si elle est active ou non, la bande passante, etc.
-- **`Infos ONT`** : affiche les informations importantes concernant la connexion et le module Fibre (ONT), telles que la bande passante, la qualité du signal, le numéro de série et les versions logicielles, etc. Les champs `Puissance Signal Réception`, `Puissance Signal Transmission`, `Température`, `Voltage` et `BIAS` affichent des valeurs vertes si elles correspondent aux normes de qualité acceptables pour la connexion, en rouge si elles représentent un problème, en orange si elles sont aux limites acceptables.
+### Buttons
+The `Livebox Stats/Info` tab provides the following buttons:
+- **`Livebox Info`**: displays the main Livebox information, such as software versions, WAN IP address, active services, memory status, and so on.
+- **`Internet Info`**: displays the internet access type, connection credentials, IPv4 and IPv6 addresses, the date and time of the last connection, connection bandwidth, MTU, and so on.
+- **`Wi-Fi Info`**: displays general Wi-Fi connectivity information and the status of each access point, including guest access points. For each access point, detailed information is available, such as channel, standard, bandwidth, quality, band, and number of connected devices.
+- **`LAN Info`**: displays general LAN connectivity information, including basic DHCP information and whether each Ethernet interface is active, its bandwidth, and so on.
+- **`ONT Info`**: displays important information about the connection and the fibre module (ONT), such as bandwidth, signal quality, serial number, and software versions. The `Receive Signal Power`, `Transmit Signal Power`, `Temperature`, `Voltage`, and `BIAS` fields are green when within acceptable connection-quality standards, red when indicating a problem, and orange when close to the acceptable limits.
+
 ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_LiveboxInfos_ONT.png)
-- **`Infos VoIP`** : affiche les informations générales concernant la téléphonie, telles que le protocole, le numéro de téléphone, la version logicielle de l'interface DECT, etc.
-- **`Infos IPTV`** : affiche les informations générales relatives aux services de télévision.
-- **`Infos USB`** : affiche les informations concernant le ou les ports USB. Si une clé USB est insérée, ou a été insérée depuis le dernier démarrage de la Livebox, ses informations sont affichées.
-- **`Export...`** : permet d'exporter l'ensemble des informations affichées par chacun des boutons dans un fichier texte. Utile pour communiquer ces informations ou faire un suivi pour détecter les changements.
+- **`VoIP Info`**: displays general telephony information, such as the protocol, telephone number, and DECT interface software version.
+- **`IPTV Info`**: displays general information about TV services.
+- **`USB Info`**: displays information about the USB port or ports. If a USB drive is currently connected, or has been connected since the Livebox last started, its information is displayed.
+- **`Export...`**: exports all information displayed by the buttons to a text file. This is useful for sharing the information or tracking changes over time.
 
 
-## Graphes - Courbes de trafic par interface et par appareil <a id="graphs"></a>
+## Graphs — Traffic graphs by interface and device <a id="graphs"></a>
 
 ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Graph.png)
 
-Affiche les graphiques des données reçues et transmises pour chaque interface / appareil sélectionné à partir de données stockées par la Livebox elle-même. Les volumes sont en méga-octets par seconde, avec un échantillonnage en principe toutes les 30 secondes (l'échantillonnage et sa fréquence sont contrôlés par la Livebox). Les graphes se mettent à jour automatiquement à la réception de nouveaux échantillons sous forme d'événements.  
-Il est possible de naviguer et de zoomer dans les graphiques à la souris, puis de revenir à la vue normale en cliquant dans le coin en bas à gauche. Un clic droit sur un graphe permet d'accéder à d'autres fonctionnalités telles que l'exportation en différents formats. Toute la documentation est accessible [ici](https://pyqtgraph.readthedocs.io/en/latest/user_guide/index.html).
+This tab displays graphs of received and transmitted data for each selected interface or device, using data stored by the Livebox itself. Volumes are shown in megabytes per second, usually sampled every 30 seconds (sampling and its frequency are controlled by the Livebox). Graphs update automatically when new samples arrive as events.
+You can navigate and zoom in the graphs with the mouse, then return to the normal view by clicking in the lower-left corner. Right-clicking a graph opens additional features, such as exporting it in different formats. Full documentation is available [here](https://pyqtgraph.readthedocs.io/en/latest/user_guide/index.html).
 
-### Sélection des interfaces et des appareils
-Il faut commencer par sélectionner les interfaces et/ou les appareils dont on veut obtenir les graphiques, pour cela deux boutons sont disponibles :
-- **`Ajouter...`** : affiche un dialogue permettant de sélectionner une interface ou un appareil.
+### Selecting interfaces and devices
+First, select the interfaces and/or devices you want to graph. Two buttons are available:
+- **`Add...`**: opens a dialog where you can select an interface or a device.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Graph_Add.png)
 
-    Commencer par sélectionner le type, interface ou appareil. Puis l'interface ou l'appareil en question, ainsi que la couleur à utiliser sur le graphique pour cet objet. La sélection n'affiche que des objets pour lesquels des mesures sont potentiellement disponibles. Pour les appareils les noms locaux sont utilisés, et par défaut l'adresse physique (MAC). Le dialogue affiche en informations complémentaires l'identifiant interne à la Livebox de l'objet sélectionné, le nombre d'échantillons stockés dans la Livebox pour cet objet (le nombre maximum est fixé à 8680 par la Livebox) et une estimation de la fenêtre de temps correspondante. Cependant cette fenêtre de temps peut être erronée, car si l'interface ou l'appareil sont déconnectés pendant une période de temps aucun échantillon n'est émis durant cette période. Ce qui veut dire que la période de temps totale entre le plus ancien échantillon et le plus récent peut être bien plus longue que cette estimation.
-- **`Supprimer`** : permet de supprimer l'interface ou l'appareil sélectionné.
+    First select the type, interface or device. Then choose the relevant interface or device and the colour to use for that item on the graph. Only items for which measurements may be available are shown. For devices, local names are used, or the MAC address by default. Additional information is shown in the dialog: the Livebox's internal identifier for the selected item, the number of samples stored by the Livebox for that item (the maximum is set by the Livebox at 8,680), and an estimate of the corresponding time window. This estimate may be inaccurate: if an interface or device is disconnected for a period, no samples are emitted during that time. As a result, the elapsed time between the oldest and newest samples may be much longer than estimated.
+- **`Remove`**: removes the selected interface or device.
 
-### Options des graphiques
-Des options sont disponibles pour paramétrer les graphiques :
-- **`Fenêtre`** : fenêtre de temps en heure de l'affichage des graphiques, à partir du présent. Une valeur à 0 affichera l'ensemble des statistiques disponibles dans la Livebox pour les objets sélectionnés.
-- **`Couleur de fond`** : couleur de fond à utiliser pour les graphiques de réception et d'émission. Un clic droit supprime toute couleur, la couleur par défaut sera donc utilisée.
+### Graph options
+The following options are available for configuring graphs:
+- **`Window`**: time window in hours to display, counting back from the present. A value of `0` displays all statistics available in the Livebox for the selected items.
+- **`Background colour`**: background colour for the receive and transmit graphs. Right-click to clear the colour and use the default instead.
 
-### Génération des graphiques
-Le bouton **`Appliquer`** permet de charger toutes les informations relatives aux interfaces et appareils sélectionnés, de dessiner les graphiques correspondants en tenant compte des options ci-dessus, et de sauvegarder la configuration. Celle-ci sera automatiquement rechargée au prochain lancement du programme.  
+### Generating graphs
+The **`Apply`** button loads all information for the selected interfaces and devices, draws the corresponding graphs using the options above, and saves the configuration. The configuration is automatically reloaded the next time the program starts.
 
-Le bouton **`Export...`** permet d'exporter au format CSV (avec le point-virgule comme séparateur) les dernières données chargées par le bouton `Appliquer` ainsi que celles reçues entre temps via des événements.
+The **`Export...`** button exports to CSV (using a semicolon as the separator) the most recently loaded data from `Apply`, along with any data received through events in the meantime.
 
 
-## Infos Appareil - Informations détaillées pour chaque appareil connu <a id="deviceinfos"></a>
+## Device info — Detailed information about each known device <a id="deviceinfos"></a>
 
 ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_DeviceInfos.png)
 
-La liste des appareils connus, sur la gauche, affiche les colonnes suivantes :
-- **Nom** : nom local de l'appareil. Ce nom peut être attribué, changé ou supprimé via le bouton `Assigner Nom...`.
-- **MAC** : adresse MAC, aussi appelée adresse physique de l'appareil.
+The list of known devices on the left displays these columns:
+- **Name**: the device's local name. It can be assigned, changed, or removed using `Assign Name...`.
+- **MAC**: the MAC address, also known as the physical address.
 
-Lorsqu'un appareil est sélectionné dans cette liste ses informations détaillées s'affichent dans la liste de droite. Attributs notables :
-- **Actif** : indique si l'appareil est actif ou non.
-- **Authentifié** : indique si la connexion Wifi de l'appareil a bien été authentifiée.
-- **Bloqué** : indique si vous avez bloqué l'appareil ou non. Le blocage peut être contrôlé avec le bouton `Bloquer`/`Débloquer`. Il peut être utile de bloquer un appareil inconnu si vous avez des suspicions.
-- **Planificateur** : indique si une planification de connexion est active pour cet appareil. La planification peut être contrôlée avec le bouton `Planificateur...`.
-- **Première Connexion** : date et heure de la première connexion. Attention cette valeur peut aussi correspondre à la date/heure d'un précédent redémarrage de la Livebox.
-- **Dernière Connexion** : date et heure de la dernière connexion.
-- **Dernier Changement** : date et heure du dernier changement détecté pour cet appareil.
-- **Nom** : nom connu par la Livebox pour cet appareil, avec la source de ce nom entre parenthèses. Ainsi plusieurs noms peuvent s'afficher pour des sources différentes.
-- **Type** : type connu par la Livebox pour cet appareil, avec la source de ce type entre parenthèses. Ainsi plusieurs types peuvent s'afficher pour des sources différentes.
-- **Adresse IPvX** : adresse IP (v4 ou v6) de l'appareil. Entre parenthèses s'affiche si l'adresse est celle active ou non, et atteignable sur le réseau (reacheable) ou non (not reacheable). Si l'adresse est réservée pour cet appareil dans la configuration DHCP de la Livebox une mention s'affiche (Reserved).
-- **Fabricant** : le fabricant de cet appareil, déduit à partir de son adresse MAC. Le programme utilise l'API du site [macaddress.io](https://macaddress.io/) pour déterminer le fabricant. C'est un service gratuit, mais il faut créer un compte et indiquer l'API Key correspondante dans les préférences pour bénéficier de cette fonctionnalité.
-- **Force Signal Wifi** et **Taux Bruit Signal Wifi** : donnent des indications sur la qualité de la connexion pour les appareils Wifi.
+When you select a device in this list, its detailed information appears in the list on the right. Notable attributes include:
+- **Active**: indicates whether the device is active.
+- **Authenticated**: indicates whether the device's Wi-Fi connection has been authenticated.
+- **Blocked**: indicates whether you have blocked the device. Use `Block`/`Unblock` to control this. Blocking an unknown device may be useful if you suspect it is unauthorized.
+- **Scheduler**: indicates whether a connection schedule is active for this device. The schedule can be managed using `Scheduler...`.
+- **First Connection**: date and time of the first connection. Note that this may also correspond to the date and time of a previous Livebox restart.
+- **Last Connection**: date and time of the most recent connection.
+- **Last Change**: date and time when the last change to this device was detected.
+- **Name**: the name known by the Livebox for this device, with the source of the name in parentheses. Multiple names may appear if they come from different sources.
+- **Type**: the device type known by the Livebox, with the source of the type in parentheses. Multiple types may appear if they come from different sources.
+- **IPvX Address**: the device's IP address (IPv4 or IPv6). Parentheses indicate whether the address is active and reachable on the network. If the address is reserved for this device in the Livebox DHCP configuration, a `Reserved` label is shown.
+- **Manufacturer**: the device manufacturer inferred from its MAC address. The program uses the [macaddress.io](https://macaddress.io/) API to identify the manufacturer. The service is free, but you must create an account and enter the corresponding API key in preferences to use this feature.
+- **Wi-Fi Signal Strength** and **Wi-Fi Signal Noise Ratio**: indicate the quality of the Wi-Fi connection for wireless devices.
 
-### Boutons
-L'onglet `Infos Appareil` propose les boutons suivants :
-- **`Rafraîchir`** : rafraîchit les informations affichées pour l'appareil sélectionné.
-- **`Assigner Nom...`** : permet d'attribuer ou d'effacer le nom local, le nom Livebox et/ou le nom DNS de l'appareil sélectionné.
+### Buttons
+The `Device Info` tab provides the following buttons:
+- **`Refresh`**: refreshes the information displayed for the selected device.
+- **`Assign Name...`**: assigns or clears the local name, Livebox name, and/or DNS name for the selected device.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_DeviceInfos_AssignName.png)
 
-    Décocher la boite pour effacer le nom. Les trois noms peuvent bien sûr être différents.
-- **`Assigner Type...`** : permet d'attribuer ou d'effacer le type de l'appareil sélectionné.
+    Uncheck the box to clear a name. The three names can, of course, be different.
+- **`Assign Type...`**: assigns or clears the type of the selected device.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_DeviceInfos_AssignType.png)
 
-    Il est possible de sélectionner un des types standards connus par la Livebox dans le menu, chaque type étant affiché avec son icône Livebox correspondante. Lorsqu'un type standard est sélectionné, son nom connu par la Livebox est automatiquement rempli dans la zone de texte et on peut valider le dialogue. Il reste possible d'assigner manuellement un type non connu par la Livebox en le tapant directement dans la zone de texte. Note : bien que le type "Djingo Speaker" soit référencé comme standard par la Livebox 5, ce type ne semble pas (encore ?) supporté par l'interface graphique de la Livebox. **Attention**: si vous assignez le type "Wi-Fi Repeater" (valeurs "repeteurwifi", "repeteurwifi6" ou "SAH AP") à un appareil le logiciel l'identifiera comme répéteur Orange et essaiera de s'y connecter. Donc s'il ne s'agit pas vraiment d'un répéteur Orange vous aurez une erreur de connexion au démarrage.
-- **`Oublier...`** : permet de demander à la Livebox d'oublier définitivement cet appareil. Il disparaîtra donc immédiatement de toutes les listes. Attention si l'appareil en question est actif, sa connexion ne sera nullement suspendue, cependant toute son activité restera invisible et ce jusqu'à sa prochaine tentative de connexion.
-- **`WakeOnLAN`** : permet d\'envoyer un signal de réveil sur réseau à l'appareil sélectionné. Celui-ci doit être configuré pour s'allumer à la réception de ce signal (option WOL) pour que cela fonctionne.
-- **`Planificateur...`** : Permet de configurer le planificateur d'accès au réseau pour cet appareil. L'état du planificateur s'affiche dans les informations de l'appareil.
+    You can select one of the standard types known to the Livebox from the menu; each type is displayed with its corresponding Livebox icon. When a standard type is selected, its name as known by the Livebox is filled in automatically in the text field, and you can confirm the dialog. You can also assign a type not known by the Livebox by typing it directly into the field. Note: although the type `Djingo Speaker` is listed as standard by Livebox 5, it does not appear to be supported (yet?) by the Livebox graphical interface. **Warning:** if you assign the type `Wi-Fi Repeater` (values `repeteurwifi`, `repeteurwifi6`, or `SAH AP`) to a device, the software will identify it as an Orange repeater and try to connect to it. If it is not actually an Orange repeater, a connection error will occur at startup.
+- **`Forget...`**: asks the Livebox to permanently forget the device, which immediately disappears from all lists. If the device is active, its connection will not be suspended; however, all its activity will remain invisible until its next connection attempt.
+- **`WakeOnLAN`**: sends a wake-up signal over the network to the selected device. The device must be configured to power on when it receives this signal (Wake-on-LAN, or WOL) for this to work.
+- **`Scheduler...`**: configures the selected device's network-access schedule. The schedule status is shown in the device information.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_DeviceInfos_Scheduler.png)
 
-    La planification peut être configurée à la souris (vert = activé / rouge = désactivé) avec une résolution au quart d'heure. Il est aussi possible via la zone "Ajouter Période" de configurer des plages horaires d'activation ou de désactivation avec une précision à la minute. Attention si vous cliquez sur la table ensuite la résolution reviendra automatiquement au quart d'heure.
-- **`Bloquer`/`Débloquer`** : permet de bloquer/débloquer la connexion de l'appareil sélectionné. L'état bloqué ou non s'affiche dans les informations de l'appareil, champs "Bloqué".
+    You can configure the schedule with the mouse (green = enabled / red = disabled), in 15-minute increments. The `Add Period` field also lets you configure enable/disable time ranges to the nearest minute. Note that clicking the table afterwards resets the resolution to 15-minute increments.
+- **`Block`/`Unblock`**: blocks or unblocks the selected device's connection. Its blocked status is displayed in the device information under `Blocked`.
 
 
-## Événements - Liste des événements reçus pour chaque appareil connu <a id="events"></a>
+## Events — Events received for each known device <a id="events"></a>
 
 ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Events.png)
 
-La liste des appareils connus, sur la gauche, affiche les colonnes suivantes :
-- **Nom** : nom local de l'appareil. Ce nom peut être attribué, changé ou supprimé via le bouton `Assigner Nom...` de l'onglet `Infos Appareil`.
-- **MAC** : adresse MAC, aussi appelée adresse physique de l'appareil.
+The list of known devices on the left displays these columns:
+- **Name**: the device's local name. It can be assigned, changed, or removed using `Assign Name...` on the `Device Info` tab.
+- **MAC**: the MAC address, also known as the device's physical address.
 
-Lorsqu'un appareil est sélectionné dans cette liste tous les événements reçus depuis le lancement du programme pour cet appareil s'affichent dans la liste de droite. La plupart de ces événements ont été interprétés par le programme pour mettre à jour l'interface dynamiquement, et cette liste permet d'avoir un historique. La taille de cet historique par appareil est limitée aux 100 dernières entrées (cette limite peut être ajustée facilement en modifiant la variable `MAX_EVENT_BUFFER_PER_DEVICE` du module `LmEventsTab.py`).
+When you select a device in this list, all events received for that device since the program started appear in the list on the right. The program interprets most of these events to update the interface dynamically, and this list provides a history. The history is limited to the latest 100 entries per device. You can easily change this limit by modifying the `MAX_EVENT_BUFFER_PER_DEVICE` variable in `LmEventsTab.py`.
 
-La liste des événements est composée des colonnes :
-- **Heure** : heure de réception de l'événement.
-- **Raison** : le type d'événement généré par la Livebox.
-- **Attributs** : aperçu des données brutes de l'événement lui-même, au format JSON.
+The event list contains these columns:
+- **Time**: the time the event was received.
+- **Reason**: the type of event generated by the Livebox.
+- **Attributes**: a preview of the event's raw data in JSON format.
 
-Un double clic sur un événement ou un clic sur le bouton **`Afficher Événement`** permet d'afficher un dialogue contenant les informations complètes :
-- **Raised** : date et heure précise de réception de l'événement.
-- **Handler** : gestionnaire de l'événement, contenant la plupart du temps la clé de l'appareil qui n'est autre que son adresse MAC.
-- **Reason** : le type d'événement.
-- **Attributes** : données brutes complètes de l'événement lui-même, au format JSON tel que généré par la Livebox.  
+Double-click an event or click **`Show Event`** to open a dialog containing the full details:
+- **Raised**: the exact date and time the event was received.
+- **Handler**: the event handler, usually containing the device key, which is its MAC address.
+- **Reason**: the event type.
+- **Attributes**: the complete raw event data in JSON format, as generated by the Livebox.
 
-### Notifications automatiques
-- Le bouton **`Notifications...`** permet d'accéder à la configuration des notifications automatiques à générer (par exemple par email) à la détection de certains événements.
+### Automatic notifications
+- The **`Notifications...`** button opens the settings for automatic notifications to generate when certain events are detected (for example, email notifications).
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Events_Notifications.png)
 
-    Vous pouvez créer autant de règles que nécessaire. Ce n'est pas grave si plusieurs règles concernent le ou les mêmes appareils, le programme ne détecte pas non plus les règles dupliquées. Il suffit qu'au moins une règle soit trouvée qui concerne une notification pour un appareil pour que cette notification soit effectuée.
-    La liste affiche la liste des règles configurées, avec le ou les appareils concernés, les pastilles bleues indiquent les événements sélectionnés pour la notification, les pastilles vertes le ou les types de notifications sélectionnés (email et/ou fichiers CSV journaliers). Les boutons **`Ajouter`** et **`Supprimer`** permettent de créer une règle ou de supprimer la règle sélectionnée.  
+    You can create as many rules as needed. Multiple rules may apply to the same devices, and the program does not detect duplicate rules. A notification is sent for a device as long as at least one matching rule requests it.
+    The list displays the configured rules and the devices concerned. Blue dots indicate the events selected for notification; green dots indicate the selected notification types (email and/or daily CSV files). Use **`Add`** and **`Remove`** to create a rule or remove the selected rule.
 
-    Paramètres d'une règle :
-    - **`Appareil`** : permet de sélectionner le ou les appareils pour lesquels recevoir une notification. `Tout appareil` appliquera la règle pour l'ensemble des appareils. `Tout appareil inconnu` appliquera la règle à n'importe quel appareil inconnu.
-    - **`Adresse MAC`** : adresse physique de l'appareil sélectionné.
-    - **`Événements`** : sélection des événements pour lesquels recevoir une notification. Ajout ou suppression d'appareils, connexion, déconnexion, ou changement de points d'accès (utile si vous disposez d'un ou plusieurs répéteurs Wifi Orange).
-    - **`Actions`** : sélection des actions à réaliser pour notifier. Il est possible de reporter les événements dans un fichier CSV journalier, ou d'envoyer les informations de chaque événement par email instantané.
+    Rule settings:
+    - **`Device`**: selects the device or devices for which to receive notifications. `All devices` applies the rule to every device. `All unknown devices` applies it to any unknown device.
+    - **`MAC address`**: the physical address of the selected device.
+    - **`Events`**: selects which events should trigger a notification, such as adding or removing devices, connecting, disconnecting, or changing access points (useful if you have one or more Orange Wi-Fi repeaters).
+    - **`Actions`**: selects how notifications should be delivered. Events can be recorded in a daily CSV file or the details of each event can be sent immediately by email.
 
-    Préférences des notifications:
-    - **`Fréquences Résolution des Événements`** : les événements sont détectés instantanément, cependant certains événements peuvent s'annuler lorsque générés dans une courte fenêtre de temps, tels que la déconnexion suivie d'une reconnexion dans les 15 secondes d'un appareil donné (arrive fréquemment). Pour éviter des notifications intempestives un temps d'attente de 30 secondes est fortement recommandé pour laisser le programme identifier ces situations. Un temps inférieur à 5 secondes est fortement déconseillé pour éviter que le programme ne consomme trop de ressources.
-    - **`Répertoire des fichiers CSV`** : répertoire dans lequel générer les fichiers CSV journaliers. Cocher l'option `Défaut` pour générer les fichiers dans le [le répertoire de configuration du programme](#configuration). Sinon cliquer sur le bouton `Sélectionner` pour choisir un répertoire spécifique.
+    Notification preferences:
+    - **`Event Resolution Interval`**: events are detected immediately, but some events may cancel each other out when they occur within a short period. For example, a device disconnecting and reconnecting within 15 seconds is common. To avoid unnecessary notifications, a 30-second delay is strongly recommended so that the program can identify such situations. A delay shorter than 5 seconds is strongly discouraged to prevent excessive resource usage.
+    - **`CSV directory`**: the directory in which to create daily CSV files. Select `Default` to use the [program configuration directory](#configuration), or click `Select` to choose a specific directory.
 
-## DHCP - Contrôle fin du serveur DHCP <a id="dhcp"></a>
+
+## DHCP — Fine-grained DHCP server control <a id="dhcp"></a>
 
 ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_DHCP.png)
 
-### Baux statiques
-La liste des baux statiques configurés est affichée sur la gauche. Les deux domaines de réseau sont gérés :
-- `Home` : votre réseau privé, dont vous pouvez configurer sa plage d'IPs.
-- `Guest` : le réseau Wifi invité, qui a sa propre plage d'IPs (non-modifiable).
+### Static leases
+The configured static leases are listed on the left. Two network domains are supported:
+- `Home`: your private network, whose IP address range you can configure.
+- `Guest`: the guest Wi-Fi network, which has its own IP range that cannot be changed.
 
-La liste affiche les colonnes suivantes :
-- **Nom** : nom local de l'appareil. Ce nom peut être attribué, changé ou supprimé via le bouton `Assigner Nom...` de l'onglet `Infos Appareil`.
-- **Domaine** : domaine d'assignation, `Home` ou `Guest`.
-- **MAC** : adresse MAC, aussi appelée adresse physique de l'appareil.
-- **IP** : adresse IP assignée statiquement à l'appareil.
+The list contains these columns:
+- **Name**: the device's local name. It can be assigned, changed, or removed using `Assign Name...` on the `Device Info` tab.
+- **Domain**: the assignment domain, either `Home` or `Guest`.
+- **MAC**: the MAC address, also known as the physical address.
+- **IP**: the IP address statically assigned to the device.
 
-### Boutons
-Les boutons suivants sont proposés pour gérer la liste des baux :
-- **`Rafraîchir`** : rafraîchit la liste des baux statiques.
-- **`Ajouter...`** : permet d'ajouter un bail.
+### Buttons
+The following buttons are available to manage the lease list:
+- **`Refresh`**: refreshes the list of static leases.
+- **`Add...`**: adds a lease.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_DHCP_AddBinding.png)
 
-    La liste des appareils proposés est triée et est composée d'un mélange des appareils connectés et ceux référencés dans le fichier local des adresses MAC. L'adresse MAC est directement déduite de l'appareil sélectionné mais on peut en taper une totalement à la main. Choisir le domaine réseau entre `Home` ou `Guest`, et une adresse IP libre sera automatiquement proposée mais celle ci reste bien sûr configurable. Attention un même appareil ne peut être configuré que sur un seul domaine, et s'il se connecte sur un domaine alors qu'un bail statique est configuré sur l'autre ce bail sera automatiquement supprimé.
-- **`Supprimer`** : supprime le bail sélectionné.
+    The suggested device list is sorted and combines connected devices with those listed in the local MAC-address file. The MAC address is filled in from the selected device, but you can also type one manually. Choose the network domain (`Home` or `Guest`). A free IP address is suggested automatically, but you can change it. Note that a device can be configured in only one domain. If it connects to a domain while a static lease is configured for the other domain, that lease is automatically removed.
+- **`Remove`**: removes the selected lease.
 
-### Informations DHCP détaillées
-La liste sur la droite affiche de nombreux détails sur le serveur DHCP:
-- La configuration détaillée des deux domaines `Home` et `Guest`.
-- Des détails sur le DHCPv4 ainsi que toutes les options DHCP envoyées et reçues.
-- Des détails sur le DHCPv6 ainsi que toutes les options DHCP envoyées et reçues.
+### Detailed DHCP information
+The list on the right displays extensive DHCP server information:
+- Detailed configuration for both the `Home` and `Guest` domains.
+- Information about DHCPv4, including all DHCP options sent and received.
+- Information about DHCPv6, including all DHCP options sent and received.
 
-### Boutons
-Les boutons suivants sont proposés pour gérer la liste des baux :
-- **`Rafraîchir`** : rafraîchit la liste des informations DHCP.
-- **`Réglages DHCP...`** : permet de configurer le serveur DHCP.
+### Buttons
+The following buttons are available for the DHCP information:
+- **`Refresh`**: refreshes the DHCP information.
+- **`DHCP Settings...`**: configures the DHCP server.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_DHCP_Setup.png)
 
-    Permet d'activer ou de désactiver le serveur, de changer l'adresse IP de la Livebox, de changer le masque de sous-réseau du serveur DHCP ainsi que la plage d'adresse IP pour le domaine `Home`.
+    You can enable or disable the server, change the Livebox IP address and DHCP server subnet mask, and change the IP address range for the `Home` domain.
 
 
-## NAT/PAT - Règles de redirection de port et de protocole <a id="natpat"></a>
+## NAT/PAT — Port and protocol forwarding rules <a id="natpat"></a>
 
 ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_NatPat.png)
 
-Cet onglet permet de gérer de façon fine les règles de redirection de port et de protocole IPv4, IPv6 et UPnP de la Livebox. De par cette gestion fine il peut arriver que certaines règles, bien que correctement stockées et interprétées par la Livebox, ne s'affichent pas dans l'interface Web de la Livebox. Ceci est normal et ne représente pas vraiment de problème.
+This tab lets you finely manage the Livebox's IPv4, IPv6, and UPnP port- and protocol-forwarding rules. Because the program exposes more detailed control, some rules may not appear in the Livebox web interface even though they are stored and interpreted correctly by the Livebox. This is normal and is not necessarily a problem.
 
-### Redirections de port
-La liste des règles de redirection de port, en haut, affiche les colonnes suivantes :
-- **A** : icône indiquant si la règle est active ou non.
-- **Type** : type de la règle, entre IPv4, IPv6 et UPnP. Les règles UPnP sont gérées automatiquement par la Livebox et vous ne devriez normalement pas avoir à les modifier.
-- **Nom** : nom de la règle.
-- **Description** : description de la règle.
-- **Protocoles** : liste des protocoles concernés par la règle. 
-- **Port Interne** : port ou plage de ports interne sur lequel le trafic est redirigé.
-- **Port Externe** : port ou plage de ports externe à rediriger.
-- **Appareil** : appareil (ou son adresse IP) sur lequel le trafic est redirigé.
-- **IP Externes** : liste des adresses IP externes concernées par la règle.
+### Port forwarding
+The list of port-forwarding rules at the top contains these columns:
+- **A**: an icon indicating whether the rule is active.
+- **Type**: the rule type, either IPv4, IPv6, or UPnP. UPnP rules are managed automatically by the Livebox and normally should not need to be modified.
+- **Name**: the rule name.
+- **Description**: the rule description.
+- **Protocols**: the protocols covered by the rule.
+- **Internal Port**: the internal port or port range to which traffic is forwarded.
+- **External Port**: the external port or port range to forward.
+- **Device**: the device (or its IP address) to which traffic is forwarded.
+- **External IPs**: the external IP addresses covered by the rule.
 
-Un **double clic** sur une règle permet de facilement l'éditer.
+You can easily edit a rule by **double-clicking** it.
 
-### Boutons
-Les boutons suivants sont proposés pour gérer la liste des règles :
-- **`Rafraîchir`** : rafraîchit la liste des règles de redirection de port.
-- **`Activer/Désactiver`** : active/désactive la règle sélectionnée.
-- **`Ajouter...`** : permet d'ajouter une règle de redirection de port.
-- **`Modifier...`** : permet de modifier la règle de redirection de port sélectionnée.
+### Buttons
+The following buttons are available to manage the rules:
+- **`Refresh`**: refreshes the list of port-forwarding rules.
+- **`Enable/Disable`**: enables or disables the selected rule.
+- **`Add...`**: adds a port-forwarding rule.
+- **`Edit...`**: edits the selected port-forwarding rule.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_NatPat_PortForwarding.png)
 
-- **`Supprimer`** : supprime la règle de redirection de port sélectionnée.
-- **`Tout Supprimer...`** : permet de supprimer toutes les règles de redirection de port. Il est possible de supprimer uniquement une sélection de types de règle. Si une ou plusieurs règles posent problème à la Livebox (par exemple lorsque leur nom contient des caractères spéciaux) ce bouton peut permettre de revenir à une situation saine.
-- **`Export...`** : permet d'exporter dans un fichier les règles de redirection de port d'un ou plusieurs types choisis.
-- **`Import...`** : permet de réimporter des règles de redirection de port précédemment exportées dans un fichier. Si des règles de même nom existent déjà elles seront écrasées par celles importées.
+- **`Remove`**: removes the selected port-forwarding rule.
+- **`Remove All...`**: removes all port-forwarding rules. You can choose to remove only selected rule types. If one or more rules cause problems for the Livebox (for example, because a rule name contains special characters), this button may help restore a working state.
+- **`Export...`**: exports port-forwarding rules of one or more selected types to a file.
+- **`Import...`**: imports port-forwarding rules previously exported to a file. Existing rules with the same names are overwritten by the imported rules.
 
-### Redirections de protocole
-La liste des règles de redirection de protocole, en bas, affiche les colonnes suivantes :
-- **A** : icône indiquant si la règle est active ou non.
-- **Type** : type de la règle, entre IPv4 et IPv6.
-- **Nom** : nom de la règle.
-- **Description** : description de la règle.
-- **Protocoles** : liste des protocoles concernés par la règle. 
-- **Appareil** : appareil (ou son adresse IP) sur lequel le trafic est redirigé. En IPv6 il est aussi possible de spécifier un préfix plutôt qu'une adresse.
-- **IP Externes** : liste des adresses IP externes concernées par la règle.
+### Protocol forwarding
+The list of protocol-forwarding rules at the bottom contains these columns:
+- **A**: an icon indicating whether the rule is active.
+- **Type**: the rule type, either IPv4 or IPv6.
+- **Name**: the rule name.
+- **Description**: the rule description.
+- **Protocols**: the protocols covered by the rule.
+- **Device**: the device (or its IP address) to which traffic is forwarded. For IPv6, you can specify a prefix instead of an address.
+- **External IPs**: the external IP addresses covered by the rule.
 
-Un **double clic** sur une règle permet de facilement l'éditer.
+You can easily edit a rule by **double-clicking** it.
 
-### Boutons
-Les boutons suivants sont proposés pour gérer la liste des règles :
-- **`Rafraîchir`** : rafraîchit la liste des règles de redirection de protocole.
-- **`Activer/Désactiver`** : active/désactive la règle sélectionnée.
-- **`Ajouter...`** : permet d'ajouter une règle de redirection de protocole.
-- **`Modifier...`** : permet de modifier la règle de redirection de protocole sélectionnée.
+### Buttons
+The following buttons are available to manage the rules:
+- **`Refresh`**: refreshes the list of protocol-forwarding rules.
+- **`Enable/Disable`**: enables or disables the selected rule.
+- **`Add...`**: adds a protocol-forwarding rule.
+- **`Edit...`**: edits the selected protocol-forwarding rule.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_NatPat_ProtocolForwarding.png)
 
-- **`Supprimer`** : supprime la règle de redirection de protocole sélectionnée.
-- **`Tout Supprimer...`** : permet de supprimer toutes les règles de redirection de protocole. Il est possible de supprimer uniquement une sélection de types de règle. Si une ou plusieurs règles posent problème à la Livebox (par exemple lorsque leur nom contient des caractères spéciaux) ce bouton peut permettre de revenir à une situation saine.
-- **`Export...`** : permet d'exporter dans un fichier les règles de redirection de protocole d'un ou plusieurs types choisis.
-- **`Import...`** : permet de réimporter des règles de redirection de protocole précédemment exportées dans un fichier. Si des règles de même nom existent déjà elles seront écrasées par celles importées.
+- **`Remove`**: removes the selected protocol-forwarding rule.
+- **`Remove All...`**: removes all protocol-forwarding rules. You can choose to remove only selected rule types. If one or more rules cause problems for the Livebox (for example, because a rule name contains special characters), this button may help restore a working state.
+- **`Export...`**: exports protocol-forwarding rules of one or more selected types to a file.
+- **`Import...`**: imports protocol-forwarding rules previously exported to a file. Existing rules with the same names are overwritten by the imported rules.
 
 
-## Téléphone - Liste des appels téléphoniques / liste des contacts <a id="phone"></a>
+## Phone — Call history and contacts <a id="phone"></a>
 
 ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Phone.png)
 
-### Appels téléphoniques
-La liste des appels téléphoniques, sur la gauche, affiche les colonnes suivantes :
-- **T** : icône correspondant au type de l'appel.
-    - ![Icone](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Call_In.png) : appel reçu.
-    - ![Icone](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Call_In_Missed.png) : appel manqué. Dans ce cas toute la ligne est indiquée en couleur rouge.
-    - ![Icone](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Call_Out.png) : appel émis.
-    - ![Icone](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Call_Out_Failed.png) : appel émis mais non abouti.
-- **Heure** : date et heure de l'appel.
-- **Numéro** : numéro de téléphone concerné.
-- **Contact** : le nom du contact déterminé par la Livebox en fonction de la liste des contacts au moment de l'appel. Si la Livebox n'a mémorisé aucun nom, alors le programme essaie d'en trouver un dynamiquement à partir de la liste des contacts enregistrés par correspondance avec le numéro de téléphone. Si un numéro de téléphone indésirable a été mémorisé (voir fichier "SpamCalls.txt") il est automatiquement indiqué comme "# SPAM #".
-- **Durée** : durée de l'appel.
+### Phone calls
+The call list on the left displays these columns:
+- **T**: an icon indicating the call type.
+    - ![Icon](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Call_In.png): incoming call.
+    - ![Icon](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Call_In_Missed.png): missed call. The entire row is shown in red.
+    - ![Icon](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Call_Out.png): outgoing call.
+    - ![Icon](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Call_Out_Failed.png): outgoing call that did not connect.
+- **Time**: the date and time of the call.
+- **Number**: the relevant telephone number.
+- **Contact**: the contact name identified by the Livebox using the contact list as it existed at the time of the call. If the Livebox did not store a name, the program tries to find one dynamically by matching the number against saved contacts. If an unwanted number has been stored (see `SpamCalls.txt`), it is automatically shown as `# SPAM #`.
+- **Duration**: the call duration.
 
-Un **double clic** sur un appel permet de facilement créer ou éditer le contact correspondant.
+You can easily create or edit the corresponding contact by **double-clicking** a call.
 
-### Boutons
-Les boutons suivants sont proposés pour gérer la liste des appels :
-- **`Rafraîchir`** : rafraîchit la liste des appels.
-- **`Supprimer`** : supprime l'appel sélectionné.
-- **`Tout Supprimer...`** : supprime tous les appels.
-- **`Scanner spams`** : analyse tous les appels entrants non identifiés et vérifie, via l'API du site [callfilter.app](https://callfilter.app/), si le numéro est indésirable ou non (démarchages, fraudes, etc). Tous les spams identifiés sont marqués comme "# SPAM #" et le programme les mémorise dans le fichier "SpamCalls.txt" stocké dans [le répertoire de configuration du programme](#configuration). Ce fichier JSON peut être facilement modifié manuellement (ne pas le faire lorsque le programme est en cours d’exécution). Pour pouvoir utiliser cette fonctionnalité une API Key Call Filter doit être configurée dans les préférences. Pour demander une API Key (service gratuit pour 15 requêtes par minute maximum), vous devez envoyer un email en anglais à info@callfilter.app en précisant :
-    - Les tâches pour lesquelles vous prévoyez d'utiliser l'API.
-    - Le nombre de requêtes par jour (minute, heure) que vous prévoyez d'effectuer.
-- **`Sites spam`** : ouvre deux sites webs ([numeroinconnu.fr](https://www.numeroinconnu.fr/) et [callfilter.app](https://callfilter.app/)) sur votre navigateur permettant de vérifier l'origine de l'appel sélectionné.
-- **`Marquer/Retirer spam`** : permet de marquer ou de démarquer manuellement un appel entrant comme étant indésirable. Cette action est également enregistrée dans le fichier local "SpamCalls.txt".
+### Buttons
+The following buttons are available for managing calls:
+- **`Refresh`**: refreshes the call list.
+- **`Remove`**: removes the selected call.
+- **`Remove All...`**: removes all calls.
+- **`Scan for spam`**: checks all unidentified incoming calls using the [callfilter.app](https://callfilter.app/) API to determine whether a number is unwanted (telemarketing, fraud, etc.). Identified spam calls are marked as `# SPAM #` and stored in `SpamCalls.txt` in the [program configuration directory](#configuration). This JSON file can be edited manually, but do not edit it while the program is running. To use this feature, configure a Call Filter API key in preferences. To request an API key (the free service allows a maximum of 15 requests per minute), send an email in English to info@callfilter.app and specify:
+    - The tasks for which you intend to use the API.
+    - The number of requests you expect to make per day, minute, and hour.
+- **`Spam websites`**: opens [numeroinconnu.fr](https://www.numeroinconnu.fr/) and [callfilter.app](https://callfilter.app/) in your browser so you can check the origin of the selected call.
+- **`Mark/Unmark spam`**: manually marks or unmarks an incoming call as unwanted. This action is also saved in the local `SpamCalls.txt` file.
 
 ### Contacts
-La liste des contacts, sur la droite, affiche les colonnes suivantes :
-- **Nom** : nom du contact, au format nom + prénom.
-- **Portable** : numéro de téléphone portable.
-- **Domicile** : numéro de téléphone fixe.
-- **Travail** : numéro de téléphone professionnel.
-- **Sonnerie** : type de sonnerie sélectionné parmi les 7 supportés par la Livebox.
+The contact list on the right displays these columns:
+- **Name**: the contact's name, in surname + first-name format.
+- **Mobile**: mobile phone number.
+- **Home**: landline number.
+- **Work**: work telephone number.
+- **Ringtone**: ringtone type, selected from the seven supported by the Livebox.
 
-Un **double clic** sur un contact permet de facilement l'éditer.  
-**Attention** : la Livebox supporte un maximum de 255 contacts.
+You can easily edit a contact by **double-clicking** it.
+**Warning:** the Livebox supports a maximum of 255 contacts.
 
-### Boutons
-Les boutons suivants sont proposés pour gérer la liste des contacts :
-- **`Rafraîchir`** : rafraîchit la liste des contacts.
-- **`Ajouter...`** : permet de rajouter un contact. Attention aucun test de doublon n'est effectué.
+### Buttons
+The following buttons are available for managing contacts:
+- **`Refresh`**: refreshes the contact list.
+- **`Add...`**: adds a contact. Note that duplicate contacts are not checked.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Phone_Contact.png)
 
-- **`Modifier...`** : pour éditer le contact sélectionné.
-- **`Supprimer`** : supprime le contact sélectionné.
-- **`Tout Supprimer...`** : supprime tous les contacts.
-- **`Sonnerie`** : permet de tester le téléphone. Sur la gauche du bouton on peut sélectionner un des 7 types de sonnerie proposés par la Livebox, sinon le type par défaut est utilisé.
-- **`Export...`** : permet d'exporter l'ensemble des contacts dans un fichier au [format VCF](https://en.wikipedia.org/wiki/VCard). Très utile pour les sauvegarder.
-- **`Import...`** : permet d'importer un ou plusieurs fichiers au [format VCF](https://en.wikipedia.org/wiki/VCard). Attention aucun test de doublon n'est effectué. Si la limite du nombre de contacts maximum supporté (255) est atteint l'import est interrompu.
+- **`Edit...`**: edits the selected contact.
+- **`Remove`**: removes the selected contact.
+- **`Remove All...`**: removes all contacts.
+- **`Ringtone`**: tests the telephone. You can select one of the seven ringtones supported by the Livebox to the left of the button; otherwise, the default ringtone is used.
+- **`Export...`**: exports all contacts to a [VCF (vCard) file](https://en.wikipedia.org/wiki/VCard), which is useful for backup.
+- **`Import...`**: imports one or more [VCF (vCard) files](https://en.wikipedia.org/wiki/VCard). Duplicate contacts are not checked. If the maximum supported number of contacts (255) is reached, the import is stopped.
 
 
-## Actions - Boutons d'actions et de contrôle <a id="actions"></a>
+## Actions — Action and control buttons <a id="actions"></a>
 
 ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Actions.png)
 
-Cet onglet permet une liste d'actions par catégorie.
+This tab displays a list of actions grouped by category.
 
-Les actions concernant le **Wifi** :
-- **`Configuration...`** : permet de configurer toutes les bandes radios du réseau Wifi. Attention : le changement de largeur de bande n'est pas garanti de fonctionner dans tous les cas. Par exemple sur la bande radio 5 GHz le changement n'est pas pris en compte par les Livebox 4 et 5.
+Wi-Fi actions:
+- **`Configuration...`**: configures all Wi-Fi radio bands. Note that changing the channel width is not guaranteed to work in every case. For example, changes to the 5 GHz band are not applied by Livebox 4 and 5.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Actions_WifiConfig.png)
 
-    Les boutons `ON` et `OFF` permettent d'activer ou de désactiver rapidement l'interface Wifi de la Livebox.
-- **`Invité...`** : permet de configurer toutes les bandes radios du réseau Wifi Invité.
+    The `ON` and `OFF` buttons quickly enable or disable the Livebox Wi-Fi interface.
+- **`Guest...`**: configures all radio bands for the guest Wi-Fi network.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Actions_WifiConfigGuest.png)
 
-    Les boutons `ON` et `OFF` permettent d'activer ou de désactiver rapidement l'interface Wifi Invité de la Livebox.
-- **`Planificateur...`** : permet de configurer le planificateur du réseau Wifi de la Livebox.
+    The `ON` and `OFF` buttons quickly enable or disable the Livebox guest Wi-Fi interface.
+- **`Scheduler...`**: configures the Livebox Wi-Fi schedule.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Actions_Scheduler.png)
 
-    La planification peut être configurée à la souris (vert = activé / rouge = désactivé) avec une résolution au quart d'heure. Il est aussi possible via la zone "Ajouter Période" de configurer des plages horaires d'activation ou de désactivation avec une précision à la minute. Attention si vous cliquez sur la table ensuite la résolution reviendra automatiquement au quart d'heure.
-    Si un ou plusieurs répéteurs Wifi Orange sont connectés à la Livebox l'option `Appliquer à tous les répéteurs` permet de configurer exactement la même planification pour tous.
-    Les boutons `ON` et `OFF` permettent d'activer ou de désactiver rapidement le planificateur.
-- **`État Global Wifi...`** : permet d'afficher l'état global du Wifi, en incluant l'état Wifi de tous les répéteurs Wifi Orange potentiellement connectés.
+    You can configure the schedule with the mouse (green = enabled / red = disabled), in 15-minute increments. The `Add Period` field also lets you configure enable/disable time ranges to the nearest minute. Note that clicking the table afterwards resets the resolution to 15-minute increments.
+    If one or more Orange Wi-Fi repeaters are connected to the Livebox, the `Apply to all repeaters` option applies exactly the same schedule to all of them.
+    The `ON` and `OFF` buttons quickly enable or disable the scheduler.
+- **`Global Wi-Fi Status...`**: displays the overall Wi-Fi status, including the Wi-Fi status of any connected Orange Wi-Fi repeaters.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Actions_WifiGlobalStatus.png)
 
-Les actions **Diverses** :
-- **`Sauvegarde et Restauration...`** : permet de régler la sauvegarde automatique de la configuration de la Livebox, de déclencher une sauvegarde ou de demander une restauration de la configuration.
+Miscellaneous actions:
+- **`Backup and Restore...`**: configures automatic backups of the Livebox configuration, starts a backup, or requests restoration of a configuration.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Actions_BackupRestore.png)
-- **`LEDs et Écran...`** : permet de régler le niveau de luminosité des LEDs et l'affichage du mot de passe Wifi sur l'écran de la Livebox. Cette fonctionnalité est disponible uniquement à partir de la Livebox 6.
+- **`LEDs and Screen...`**: adjusts LED brightness and whether the Wi-Fi password is displayed on the Livebox screen. This feature is available only on Livebox 6 and later.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Actions_Screen.png)
 
-Les actions concernant les **Redémarrages** :
-- **`Redémarrer la Livebox...`** : permet de forcer un redémarrage de la Livebox.
-- **`Réinitialiser la Livebox...`** : permet de réinitialiser la Livebox aux paramètres d'usine. Si la restauration automatique de votre configuration est activée un dialogue vous permettra de la désactiver.
-- **`Historique Redémarrages...`** : permet d'afficher l'historique des derniers redémarrages.
+Restart actions:
+- **`Restart Livebox...`**: forces the Livebox to restart.
+- **`Reset Livebox...`**: resets the Livebox to its factory settings. If automatic configuration restoration is enabled, a dialog lets you disable it.
+- **`Restart History...`**: displays the history of recent restarts.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Actions_RebootHistory.png)
 
-    Cet historique est particulièrement utile pour détecter les redémarrages forcés par Orange pour mettre à jour le logiciel de la Livebox.
-    La liste affiche les colonnes suivantes :
-    - **Date Redémarrage** : date et heure du démarrage.
-    - **Raison Redémarrage** : la raison de ce démarrage. Typiquement "NMC" indique un démarrage forcé par logiciel et "Unsupported chipset" un redémarrage causé par une coupure de courant ou l'interrupteur de la Livebox.
-    - **Date Arrêt** : la date et heure de l'arrêt.
-    - **Raison Arrêt** : la raison de cet arrêt. Typiquement vide pour une coupure de courant, "Upgrade" pour une mise à jour logiciel et "GUI_Reboot" pour un redémarrage demandé depuis l'interface Web ou LiveboxMonitor.
+    This history is especially useful for detecting restarts forced by Orange to update the Livebox software.
+    The list displays these columns:
+    - **Restart Date**: date and time the device started.
+    - **Restart Reason**: reason for the startup. Typically, `NMC` indicates a software-forced startup, while `Unsupported chipset` indicates a restart caused by a power outage or by operating the Livebox's power switch.
+    - **Shutdown Date**: date and time the device stopped.
+    - **Shutdown Reason**: reason for the shutdown. This is typically blank after a power outage, `Upgrade` for a software update, and `GUI_Reboot` for a restart requested from the web interface or LiveboxMonitor.
 
-Les actions concernant le **Réseau** :
-- **`Niveaux de pare-feu...`** : permet de régler les niveaux des pare-feux IPv4 et IPv6.
+Network actions:
+- **`Firewall Levels...`**: sets the IPv4 and IPv6 firewall levels.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Actions_FirewallLevels.png)
-- **`Réponses aux pings...`** : permet de régler les réponses aux requêtes de ping IPv4 et IPv6.
+- **`Ping Responses...`**: configures responses to IPv4 and IPv6 ping requests.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Actions_PingResponses.png)
-- **`Test de débits...`** : permet d'effectuer des tests de débit rapides proposés par Orange. Cela peut être utile pour des tests rapides cependant des sites comme nperf.com ou speedtest.net proposent des résultats bien plus fiables.
+- **`Speed Tests...`**: runs quick speed tests provided by Orange. These can be useful for quick checks, but websites such as nperf.com or speedtest.net provide much more reliable results.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Actions_SpeedTests.png)
 
-    Deux tests sont proposés : le "natif", historique, de la Livebox et celui utilisé par le site "mon réseau local". Les résultats peuvent prendre jusqu'à une minute pour remonter et sont stockés dans le fichier de configuration pour les retrouver à chaque utilisation du dialogue.
-- **`DynDNS...`** : permet de régler les domaines DynDNS.
+    Two tests are available: the Livebox's historical native test and the test used by the "mon réseau local" website. Results may take up to a minute to arrive and are stored in the configuration file so they remain available each time the dialog is opened.
+- **`DynDNS...`**: configures DynDNS domains.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Actions_DynDNS.png)
-- **`DMZ...`** : permet de configurer les règles de la DMZ. Contrairement à l'application d'Orange on peut ici ajouter plusieurs appareils dans la DMZ, avec un filtrage des IP externes comme pour les règles NAT/PAT.
-La règle de l'application d'Orange apparaît avec l'ID `webui`, donc si on veut pouvoir gérer une règle à la fois avec LiveboxMonitor et l'application d'Orange il faut respecter cet identifiant.
-Faute de test il n'est pas garanti que cela fonctionne correctement avec plusieurs règles : **tout retour d'utilisation sera bienvenu**.
+- **`DMZ...`**: configures DMZ rules. Unlike Orange's application, this allows you to add multiple devices to the DMZ and filter external IP addresses, as with NAT/PAT rules.
+
+    The rule created by Orange's application has the ID `webui`. To manage a rule from both LiveboxMonitor and Orange's application, you must preserve this identifier.
+    Since this has not been tested, correct operation with multiple rules is not guaranteed. **Feedback from anyone who tries it is welcome.**
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Actions_DMZ.png)
-- **`Table de routage...`** : permet de configurer la table de routage statique. Cette option est uniquement disponible pour les Livebox Pro.
+- **`Routing Table...`**: configures the static routing table. This option is available only on Livebox Pro models.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Actions_Routing.png)
 
-Les actions concernant les **Réglages** :
-- **`Préférences...`** : permet d'afficher l'écran des préférences du programme.
+Settings actions:
+- **`Preferences...`**: opens the program preferences.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Actions_Preferences.png)
 
-    Voir la section **Profils*** ci-dessus pour plus de détail sur leur fonctionnement.  
- 
-    Pour chaque **profil** il est possible de configurer :
-    - `Nom` : nom du profil.
-    - `URL Livebox` : adresse de la Livebox. La valeur par défaut est `http://livebox.home/`.
-    - `Utilisateur` : login pour l'ouverture de session. Par défaut `admin`. Le mot de passe est demandé automatiquement lors de l'utilisation du profil s'il n'est pas renseigné ou s'il est erroné.
-    - `Filtrage Appareils` : active le filtrage des appareils afin de ne pas montrer certains appareils "fantômes" détectés par la Livebox. Quand ce paramètre est activé le programme affiche les mêmes appareils que l'interface Web de la Livebox. Ce paramètre est activé par défaut.
-    - `Fichier Table MacAddr` : nom du fichier de stockage des noms d'appareils. Par défaut `MacAddrTable.txt`. Voire `Le fichier MacAddrTable.txt` de la section `Configuration` pour plus d'explications.
-    - `Défaut` : indique qu'il s'agit du profil par défaut à utiliser au lancement du programme. Il ne peut y avoir qu'un seul profil par défaut.  
+    See **Profiles** above for more details on how profiles work.
 
-    Les **préférences** générales permettent de régler :
-    - `Langage` : langue utilisée par l'application, à choisir entre Français (défaut) et Anglais.
-    - `Tooltips` : active ou non les tooltips.
-    - `Fréquence Stats` : Fréquence de rafraîchissement, en secondes, de toutes les statistiques. Par défaut 3 secondes.
-    - `API Key macaddress.io` : le programme utilise l'API du site [macaddress.io](https://macaddress.io/) pour déterminer le fabricant d'un appareil à partir de son adresse MAC (champ **Fabricant** dans les informations détaillées par appareil). C'est un service gratuit, mais il faut créer un compte et indiquer ici l'API Key correspondante pour bénéficier de cette fonctionnalité.
-    - `API Key CallFilter` : le programme utilise d'API du site [callfilter.app](https://callfilter.app/) pour identifier les appels téléphoniques indésirables (onglet `Téléphone`). Pour obtenir une API Key (service gratuit pour 15 requêtes par minute maximum), vous devez envoyer votre demande par email, en anglais, à info@callfilter.app.
-    - `Indicatif Téléphonique` : indicatif téléphonique local, utile pour faire correspondre les appels téléphoniques avec les numéros de contacts. Par défaut le code de la France est utilisé, c'est-à-dire 33.
-    - `Hauteur Entêtes` : hauteur en pixels des entêtes de liste, par défaut 25.
-    - `Taille Police Entêtes` : taille de la police de caractères des entêtes de liste. Une valeur à zéro signifie d'utiliser la taille système. Par défaut ce paramètre est à zéro.
-    - `Hauteur Lignes` : hauteur en pixels des lignes de liste, par défaut 30.
-    - `Taille Police Lignes` : taille de la police de caractères des lignes de liste. Une valeur à zéro signifie d'utiliser la taille système. Par défaut ce paramètre est à zéro.
-    - `Marge Timeout` : valeur de timeout additionnelle, à utiliser par exemple si vous accédez à une Livebox à distance avec une grande latence réseau.
-    - `Séparateur CSV` : séparateur de liste (délimiteur) à utiliser lors de l'export de données dans des fichiers au format CSV.
-    - `Statistiques temps réel des appareils wifi` : active ou non les statistiques en temps réel pour les appareils wifi. Celles-ci s'affichent en bleu dans l'onglet `Appareils` et viennent recouvrir les statistiques standards qui s'affichent en noir toutes les 30 secondes.
-    - `Empêcher la mise en veille` : permet d'empêcher votre ordinateur de se mettre en veille pendant l'exécution de ce programme. Utile pour laisser tourner l'application en permanence, par exemple pour l'export des statistiques ou pour la génération de notifications en temps réel.
-    - `Utiliser le style d'interface graphique natif` : par défaut le style "Fusion" est utilisé sur toutes les plateformes. Cette option permet sur les plateformes Windows et MacOS d'utiliser un style graphique plus natif. Cette option n'a aucun effet sur les plateformes Linux.
-    - `Sauver les mots de passe` : permet de sauver les mots de passe dans la configuration (chiffrés) pour éviter d'avoir à les retaper à chaque lancement.  
+    The following settings can be configured for each **profile**:
+    - `Name`: profile name.
+    - `Livebox URL`: Livebox address. The default is `http://livebox.home/`.
+    - `User`: login username. The default is `admin`. If the password is missing or incorrect, the program asks for it when you use the profile.
+    - `Device Filtering`: filters out certain "ghost" devices detected by the Livebox. When enabled, the program displays the same devices as the Livebox web interface. This option is enabled by default.
+    - `MacAddr Table File`: filename used to store device names. The default is `MacAddrTable.txt`. See the section on `MacAddrTable.txt` above for more information.
+    - `Default`: indicates that this is the default profile used when the program starts. Only one default profile can be configured.
 
-- **`Changer de profil...`** : affiche un dialogue permettant de changer le profil en cours et de relancer le programme.
+    The **general preferences** let you configure:
+    - `Language`: application language, either French (the default) or English.
+    - `Tooltips`: enables or disables tooltips.
+    - `Stats Frequency`: statistics refresh interval, in seconds. The default is 3 seconds.
+    - `macaddress.io API Key`: the program uses the [macaddress.io](https://macaddress.io/) API to identify a device manufacturer from its MAC address (the **Manufacturer** field in detailed device information). The service is free, but you must create an account and enter your API key here to use it.
+    - `CallFilter API Key`: the program uses the [callfilter.app](https://callfilter.app/) API to identify unwanted phone calls (on the `Phone` tab). To obtain an API key (the free service allows up to 15 requests per minute), email info@callfilter.app in English.
+    - `Phone Country Code`: local telephone country code, used to match call numbers with contact numbers. The default is France's code, `33`.
+    - `Header Height`: list-header height in pixels. The default is 25.
+    - `Header Font Size`: list-header font size. A value of zero uses the system font size; zero is the default.
+    - `Row Height`: list-row height in pixels. The default is 30.
+    - `Row Font Size`: list-row font size. A value of zero uses the system font size; zero is the default.
+    - `Timeout Margin`: additional timeout value, useful for example when accessing a Livebox remotely over a high-latency network.
+    - `CSV Separator`: list delimiter used when exporting data to CSV files.
+    - `Real-time Wi-Fi Device Statistics`: enables or disables real-time statistics for Wi-Fi devices. These appear in blue on the `Devices` tab and overlay the standard statistics, which appear in black every 30 seconds.
+    - `Prevent Sleep`: prevents the computer from going to sleep while this program is running. This is useful when leaving the application running continuously, for example to export statistics or generate real-time notifications.
+    - `Use Native GUI Style`: by default, the `Fusion` style is used on all platforms. This option enables a more native-looking graphical style on Windows and macOS. It has no effect on Linux.
+    - `Save Passwords`: saves passwords (encrypted) in the configuration so you do not have to enter them every time the program starts.
 
-- **`Réglages Email...`** : permet de configurer l'envoi d'emails automatique, par exemple pour les notifications.
+- **`Change Profile...`**: opens a dialog to change the current profile and restart the program.
+
+- **`Email Settings...`**: configures automatic email sending, for example for notifications.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Actions_EmailSetup.png)
- 
-    Il est possible de configurer :
-    - `Adresse Origine` : adresse email d'origine des messages.
-    - `Adresse Destination` : adresse email de destination des messages.
-    - `Préfixe Sujet` : préfixe rajouté aux sujets des messages envoyés.
-    - `Serveur SMTP` : serveur SMTP de votre fournisseur de messagerie.
-    - `Port` : port SMTP à utiliser. 465 est recommandé pour SSL, 587 pour tout autre protocole.
-    - `Utiliser TLS` : utilisation du protocole d'encryption TLS (recommandé).
-    - `Utiliser SSL` : utilisation du protocole d'encryption SSL.
-    - `Authentification` : à sélectionner si le serveur nécessite de s'authentifier.
-    - `Utilisateur` : votre nom d'utilisateur pour s'authentifier.
-    - `Mot de passe` : votre mot de passe pour s'authentifier.  
 
-    Le bouton `Test Envoi` permet d'envoyer un message de test avec les réglages courants sans les sauvegarder.  
+    The following settings can be configured:
+    - `From Address`: sender email address.
+    - `To Address`: recipient email address.
+    - `Subject Prefix`: prefix added to the subject of outgoing messages.
+    - `SMTP Server`: your email provider's SMTP server.
+    - `Port`: SMTP port to use. Port 465 is recommended for SSL, and 587 for other protocols.
+    - `Use TLS`: use the TLS encryption protocol (recommended).
+    - `Use SSL`: use the SSL encryption protocol.
+    - `Authentication`: select this if the server requires authentication.
+    - `User`: username for authentication.
+    - `Password`: password for authentication.
 
-    La configuration pour le serveur d'Orange est très simple :
-    - Adresse origine / utilisateur -> mettre votre adresse@orange.fr
-    - Adresse destination -> la destination souhaitée
-    - Serveur SMTP -> smtp.orange.fr
-    - Port -> 587
-    - Cocher "Utiliser TLS" et "Authentification".
-    - Mot de passe -> votre mot de passe Orange.  
+    The `Test Send` button sends a test message using the current settings without saving them.
 
-    Pour gmail c'est un peu plus compliqué :
-    - Il faut d'abord régler son compte gmail pour créer un mot de passe dédié pour le programme.
-    - Aller sur son compte, onglet "Sécurité" -> [ici](https://myaccount.google.com/security)
-    - Vérifier que la "validation en deux étapes" est activée, si ce n'est pas le cas, il faut le faire.
-    - Cliquer "Validation en deux étapes" et aller sur "Mots de passe d'application" en bas.
-    - Créer un nouveau mot de passe pour l'application 'LiveboxMonitor' et notez le mot de passe (sans les espaces).
-    - Retourner dans LiveboxMonitor, réglage email.
-    - Dans les champs Adresse origine / utilisateur -> mettre votre adresse@gmail.com
-    - Adresse destination -> la destination souhaitée
-    - Serveur SMTP -> smtp.gmail.com
-    - Port -> 587
-    - Cocher "Utiliser TLS" et "Authentification"
-    - Mot de passe -> le mot de passe créé ci dessus.  
+    Configuration for Orange's email server is straightforward:
+    - From address / user: enter your `address@orange.fr`.
+    - To address: enter the intended recipient.
+    - SMTP server: `smtp.orange.fr`.
+    - Port: `587`.
+    - Select `Use TLS` and `Authentication`.
+    - Password: your Orange password.
 
-Les actions techniques de **Débogage** :
-- **`Niveau de log...`** : permet de changer le niveau de logs dans la console. Ce niveau est stocké dans la configuration du programme et sera donc conservé au prochain lancement du programme.
-- **`Appel APIs...`** : permet d'appeler directement les APIs REST/JSON de la Livebox. Une sélection d'appels est disponible en raccourci mais n'importe quel appel est possible. Pour utilisateurs avertis uniquement.
+    Gmail requires a few more steps:
+    - First, configure your Gmail account to create a dedicated app password for this program.
+    - Open your account's **Security** tab [here](https://myaccount.google.com/security).
+    - Check that **2-Step Verification** is enabled; if not, enable it.
+    - Click **2-Step Verification**, then open **App passwords** at the bottom.
+    - Create a new app password for `LiveboxMonitor` and note it down without the spaces.
+    - Return to LiveboxMonitor's email settings.
+    - From address / user: enter your `address@gmail.com`.
+    - To address: enter the intended recipient.
+    - SMTP server: `smtp.gmail.com`.
+    - Port: `587`.
+    - Select `Use TLS` and `Authentication`.
+    - Password: enter the app password you created above.
+
+Debugging actions:
+- **`Log Level...`**: changes the log level shown in the console. This setting is saved in the program configuration and persists the next time the program starts.
+- **`Call APIs...`**: calls the Livebox REST/JSON APIs directly. A selection of calls is available as shortcuts, but any call can be made. Intended for advanced users only.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Actions_CallAPIs.png)
- 
-- **`Générer documentation APIs...`** : permet de générer dans des fichiers texte l'ensemble de la documentation accessible sur les APIs de la Livebox, par module. Le programme génère un fichier par module connu, un fichier "_ALL_MODULES_" contenant l'ensemble des modules en un seul fichier, et un fichier "_PROCESSES_" qui permet d'avoir la liste des tâches tournant sur la Livebox. Certains fichiers ne contiennent qu'une erreur "Permission denied" : c'est normal, ces modules sont protégés et donc non accessibles (mais qui sait dans une prochaine version du firmware ?). Les paramètres de fonction indiqués entre parenthèses sont optionnels. Par défaut le programme génère l'ensemble des instances trouvées par type de ressources (ou "object") ainsi que toutes les valeurs trouvées par paramètres, mais ces valeurs sont filtrées si on maintient la touche `Ctrl` en cliquant sur le bouton. Cela permet de partager librement ces fichiers sans divulguer d'informations spécifiques à sa configuration, cependant avoir la liste des instances reste crucial pour une documentation vraiment complète. Malheureusement Orange a décidé de bloquer cette possibilité sur les dernières Livebox W7 et S.  
 
-Autres actions :
-- **Quitter l'application** : pour quitter l'application. Strictement équivalent à fermer la fenêtre de l'application.
-- Un clic sur le lien GitHub de l'application ouvrira la page correspondante sur votre navigateur.
+- **`Generate API Documentation...`**: generates text files containing all documentation available for the Livebox APIs, organized by module. The program creates one file for each known module, an `_ALL_MODULES_` file containing all modules in one file, and a `_PROCESSES_` file listing the tasks running on the Livebox. Some files contain only a `Permission denied` error; this is normal because those modules are protected and inaccessible (though that might change in a future firmware version). Function parameters shown in parentheses are optional. By default, the program generates all instances found by resource type (or "object") as well as all values found for parameters. These values are filtered if you hold down `Ctrl` while clicking the button. This makes it possible to share the files without disclosing configuration-specific information. However, having the list of instances is essential for truly comprehensive documentation. Unfortunately, Orange has blocked this capability on the latest Livebox W7 and S models.
 
+Other actions:
+- **Exit the application**: closes the application. This is exactly equivalent to closing its window.
+- Clicking the application's GitHub link opens the corresponding page in your web browser.
 
-## Onglets répéteurs Wifi <a id="repeaters"></a>
+## Wi-Fi repeater tabs <a id="repeaters"></a>
 
 ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Repeater.png)
 
-Le programme créé dynamiquement un onglet par répéteur Orange connecté. Si le répéteur a un nom local, celui-ci est utilisé dans l'onglet, sinon le nom par défaut est de type "RW #" suivit du numéro de répéteur dans l'ordre de détection.
-Les répéteurs font aussi partie des appareils connus, ils sont donc visibles dans l'onglet `Appareils` et leur nom peut être changé via le bouton `Assigner Nom...` de l'onglet `Infos Appareil`.
+The program dynamically creates a tab for each connected Orange repeater. If a repeater has a local name, that name is used for the tab; otherwise, the default name is `RW #` followed by the repeater number in detection order.
+Repeaters are also treated as known devices, so they appear on the `Devices` tab and their names can be changed using `Assign Name...` on the `Device Info` tab.
 
-Une icône dans le nom de l'onglet permet de connaître l'état de la connexion avec le répéteur :
-- ![Icone](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Cross.png) : le répéteur est inactif ou n'a pas d'adresse IP attribuée.
-- ![Icone](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Prohibition.png) : le répéteur est actif mais aucune session n'est ouverte. Si cet état subsiste vous pouvez essayer de forcer la création d'une session en cliquant sur le bouton `Réauthentifier...`.
-- ![Icone](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Tick.png) : le répéteur est actif et une session a été créée pour communiquer avec lui.
+An icon in the tab name indicates the connection status of the repeater:
+- ![Icon](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Cross.png): the repeater is inactive or has no IP address assigned.
+- ![Icon](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Prohibition.png): the repeater is active, but no session is open. If this status persists, try forcing a new session by clicking `Reauthenticate...`.
+- ![Icon](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Tick.png): the repeater is active and a session has been created to communicate with it.
 
-Les statistiques de trafic par interface sont affichées sous forme de liste en haut à gauche.
-Et toutes les informations détaillées sont accessibles via la barre de boutons en bas, chaque bouton remplissant la liste d'attributs sur la droite. Il est aussi possible d'exporter l'ensemble des informations dans un fichier. Enfin, une série d'actions est possible via les boutons sur la gauche.
+Traffic statistics for each interface appear in a list at the top left.
+All detailed information is available through the row of buttons at the bottom; each button fills the attribute list on the right. You can also export all the information to a file. Finally, the buttons on the left provide a number of actions.
 
-### Statistiques
+### Statistics
 
-Liste permettant de surveiller l'état du trafic géré par le répéteur :
-- **Nom** : nom de l'interface réseau. `LAN` concerne tout le trafic entre le répéteur et la Livebox. Ensuite on dispose des statistiques par interface précise (les deux prises Ethernet ainsi que les deux bandes Wifi).
-- **Rx** : nombre d'octets reçus par l'interface. La fenêtre de temps de ce total n'est pas connue. S'affiche en rouge si des erreurs de transmission sont détectées. Attention ce compteur est circulaire et ne dépasse pas les 4 Go.
-- **Tx** : nombre d'octets envoyés par l'interface. La fenêtre de temps de ce total n'est pas connue. S'affiche en rouge si des erreurs de transmission sont détectées. Attention ce compteur est circulaire et ne dépasse pas les 4 Go.
-- **TauxRx** : taux d'octets reçus par seconde par l'interface dans les trois dernières secondes (fréquence réglable dans les préférences).
-- **TauxTx** : taux d'octets envoyés par seconde par l'interface dans les trois dernières secondes (fréquence réglable dans les préférences).
+This list lets you monitor traffic handled by the repeater:
+- **Name**: network interface name. `LAN` covers all traffic between the repeater and the Livebox. Statistics are also available for individual interfaces (the two Ethernet ports and the two Wi-Fi bands).
+- **Rx**: number of bytes received by the interface. The time window covered by this total is unknown. It appears in red if transmission errors are detected. Note that this is a circular counter and cannot exceed 4 GB.
+- **Tx**: number of bytes sent by the interface. The time window covered by this total is unknown. It appears in red if transmission errors are detected. Note that this is a circular counter and cannot exceed 4 GB.
+- **RateRx**: bytes received per second by the interface over the last 3 seconds (the frequency can be changed in preferences).
+- **RateTx**: bytes sent per second by the interface over the last 3 seconds (the frequency can be changed in preferences).
 
-Si une statistique s'affiche en rouge cela signifie que des erreurs de transfert ont été détectées par le répéteur.
-Les statistiques semblent parfois surprenantes, mais il s'agit d'une interprétation sans filtre de ce que renvoie le répéteur (il ne s'agit pas d'un défaut du programme).
+If a statistic is displayed in red, the repeater has detected transfer errors.
+The statistics may sometimes look surprising, but they are an unfiltered interpretation of the data returned by the repeater; this is not a program defect.
 
-### Actions - Boutons d'actions et de contrôle
+### Actions — Action and control buttons
 
-Les actions concernant le **Wifi** :
-- **`Wifi ON`** : permet d'activer l'interface Wifi du répéteur.
-- **`Wifi OFF`** : permet de désactiver l'interface Wifi du répéteur.
-- **`Planificateur Wifi...`** : permet de configurer le planificateur du réseau Wifi du répéteur.
+Wi-Fi actions:
+- **`Wi-Fi ON`**: enables the repeater's Wi-Fi interface.
+- **`Wi-Fi OFF`**: disables the repeater's Wi-Fi interface.
+- **`Wi-Fi Scheduler...`**: configures the repeater's Wi-Fi schedule.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Actions_Scheduler.png)
 
-    La planification peut être configurée à la souris (vert = activé / rouge = désactivé) avec une résolution au quart d'heure. Il est aussi possible via la zone "Ajouter Période" de configurer des plages horaires d'activation ou de désactivation avec une précision à la minute. Attention si vous cliquez sur la table ensuite la résolution reviendra automatiquement au quart d'heure.
-    Si un ou plusieurs autres répéteurs Wifi Orange sont connectés à la Livebox l'option `Appliquer à tous les répéteurs` permet de configurer exactement la même planification pour tous.
-    Les boutons `ON` et `OFF` permettent d'activer ou de désactiver rapidement le planificateur.
+    You can configure the schedule with the mouse (green = enabled / red = disabled), in 15-minute increments. The `Add Period` field also lets you configure enable/disable time ranges to the nearest minute. Note that clicking the table afterwards resets the resolution to 15-minute increments.
+    If one or more other Orange Wi-Fi repeaters are connected to the Livebox, the `Apply to all repeaters` option applies exactly the same schedule to all of them.
+    The `ON` and `OFF` buttons quickly enable or disable the scheduler.
 
-L'état global du Wifi peut être consulté via le bouton `État Global Wifi...` de l'onglet `Actions`.
+The overall Wi-Fi status can be viewed using the `Global Wi-Fi Status...` button on the `Actions` tab.
 
-Les actions concernant les **Redémarrages** :
-- **`Redémarrer le Répéteur...`** : permet de forcer un redémarrage du répéteur.
-- **`Réinitialiser le Répéteur...`** : permet de réinitialiser le répéteur aux paramètres d'usine.
-- **`Historique Redémarrages...`** : permet d'afficher l'historique des derniers redémarrages.
+Restart actions:
+- **`Restart Repeater...`**: forces the repeater to restart.
+- **`Reset Repeater...`**: resets the repeater to its factory settings.
+- **`Restart History...`**: displays the history of recent restarts.
 
     ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Repeater_RebootHistory.png)
 
-    Cet historique est particulièrement utile pour détecter les redémarrages forcés par Orange pour mettre à jour le logiciel du répéteur.
-    La liste affiche les colonnes suivantes :
-    - **Date Redémarrage** : date et heure du démarrage.
-    - **Raison Redémarrage** : la raison de ce démarrage. Typiquement "NMC" ou "POR" indique un démarrage forcé par logiciel et "Unsupported chipset" un redémarrage causé par une coupure de courant ou l'interrupteur du répéteur.
-    - **Date Arrêt** : la date et heure de l'extinction.
-    - **Raison Arrêt** : la raison de cette extinction. Typiquement vide pour une coupure de courant, "Upgrade" pour une mise à jour logiciel et "WebUI reboot" pour un redémarrage demandé depuis l'interface Web ou LiveboxMonitor.
+    This history is especially useful for detecting restarts forced by Orange to update the repeater software.
+    The list displays these columns:
+    - **Restart Date**: date and time the repeater started.
+    - **Restart Reason**: reason for the startup. Typically, `NMC` or `POR` indicates a software-forced startup, while `Unsupported chipset` indicates a restart caused by a power outage or by operating the repeater's power switch.
+    - **Shutdown Date**: date and time the repeater stopped.
+    - **Shutdown Reason**: reason for the shutdown. This is typically blank after a power outage, `Upgrade` for a software update, and `WebUI reboot` for a restart requested from the web interface or LiveboxMonitor.
 
-Les actions diverses :
-- **`Appel APIs...`** : permet d'appeler directement les APIs REST/JSON du répéteur. Une sélection d'appels est disponible en raccourci mais n'importe quel appel est possible. Pour utilisateurs avertis uniquement.
-- **`Réauthentifier...`** : pour forcer la création d'une nouvelle session avec le répéteur. Si vous laissez trop longtemps le programme tourner sans visualiser les statistiques du répéteur ni effectuer la moindre action, la session sera automatiquement libérée par le répéteur. Dans ce cas des erreurs vont se produire en effectuant des actions : ce bouton permettra de recréer la session, permettant de reprendre les actions sans erreur.
+Miscellaneous actions:
+- **`Call APIs...`**: calls the repeater's REST/JSON APIs directly. A selection of calls is available as shortcuts, but any call can be made. Intended for advanced users only.
+- **`Reauthenticate...`**: forces a new session to be created with the repeater. If you leave the program running for a long time without viewing the repeater statistics or performing any actions, the repeater automatically releases the session. Subsequent actions will then produce errors. Use this button to recreate the session and resume working without errors.
 
-### Boutons
-Les onglets de répéteur Wifi proposent les boutons suivants :
-- **`Informations Répéteur`** : affiche les informations principales concernant le répéteur, telles que les versions de logiciels, le nom du modèle, l'heure de l'horloge interne, etc.
-- **`Informations Wifi`** : affiche les informations générales sur la connectivité Wifi, et l'état de chaque accès. Pour chaque accès on dispose d'informations détaillées telles que le canal, le standard, la bande passante, la qualité, la bande, le nombre d'appareils connectés, etc.
-- **`Informations LAN`** : affiche les informations générales sur la connectivité LAN. Pour chaque interface Ethernet on peut identifier si elle est active ou non, la bande passante, etc.
-- **`Export...`** : permet d'exporter l'ensemble des informations affichées par chacun des boutons dans un fichier texte. Utile pour communiquer ces informations ou faire un suivi pour détecter les changements.
+### Buttons
+The Wi-Fi repeater tabs provide the following buttons:
+- **`Repeater Information`**: displays key information about the repeater, such as software versions, model name, internal clock time, and so on.
+- **`Wi-Fi Information`**: displays general Wi-Fi connectivity information and the status of each access point. Detailed information is available for each access point, including channel, standard, bandwidth, quality, band, and number of connected devices.
+- **`LAN Information`**: displays general LAN connectivity information. For each Ethernet interface, you can see whether it is active, its bandwidth, and so on.
+- **`Export...`**: exports all information displayed by the buttons to a text file. This is useful for sharing the information or tracking changes over time.
 
 
-## Onglets décodeurs TV <a id="tvdecoders"></a>
+## TV decoder tabs <a id="tvdecoders"></a>
 
 ![Interface](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Tvdecoder.png)
 
-Le programme créé dynamiquement un onglet par décodeur TV Orange connecté. Si le décodeur a un nom local, celui-ci est utilisé dans l'onglet, sinon le nom par défaut est de type "TV #" suivit du numéro de décodeur dans l'ordre de détection.
-Les décodeurs font aussi partie des appareils connus, ils sont donc visibles dans l'onglet `Appareils` et leur nom peut être changé via le bouton `Assigner Nom...` de l'onglet `Infos Appareil`.
+The program dynamically creates a tab for each connected Orange TV decoder. If a decoder has a local name, that name is used for the tab; otherwise, the default name is `TV #` followed by the decoder number in detection order.
+Decoders are also treated as known devices, so they appear on the `Devices` tab and their names can be changed using `Assign Name...` on the `Device Info` tab.
 
-Une icône dans le nom de l'onglet permet de connaître l'état de la connexion avec le décodeur :
-- ![Icone](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Cross.png) : le décodeur est inactif ou n'a pas d'adresse IP attribuée.
-- ![Icone](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Tick.png) : le décodeur est actif.
+An icon in the tab name indicates the decoder's connection status:
+- ![Icon](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Cross.png): the decoder is inactive or has no IP address assigned.
+- ![Icon](http://p-dor.github.io/LiveboxMonitor/docs/png/Doc_Icon_Tick.png): the decoder is active.
 
-### Informations
-- **`Statut`** : statut actuel retourné par le décodeur.
-- **`Infos`** : informations sur le décodeur retournées par la Livebox.
-- **`Description`** : informations sur le décodeur retournées par lui même.
-- **`Chaîne`** : informations sur la chaîne TV en cours de lecture. L'identifiant EPG correspond au numéro suivant le standard Electronic Program Guide. Les icônes et descriptions de chaînes sont stockées dans un cache local pour éviter des appels aux serveurs Orange intempestifs. Si ces informations deviennent érronées utilisez le bouton "Recréer Cache".
+### Information
+- **`Status`**: the current status reported by the decoder.
+- **`Info`**: information about the decoder returned by the Livebox.
+- **`Description`**: information reported by the decoder itself.
+- **`Channel`**: information about the TV channel currently being played. The EPG identifier corresponds to the channel number in the Electronic Program Guide. Channel icons and descriptions are stored in a local cache to avoid unnecessary calls to Orange servers. If this information becomes incorrect, use the `Rebuild Cache` button.
 
-### Boutons
-- **`Recréer Cache`** : réinitialise le cache local d'informations et d'icônes sur les chaînes.
-- **`Changer Chaîne`** : permet de changer de chaîne. Vous pouvez saisir soit un numéro de chaîne, un nom de chaîne (même partiel), ou l'identifiant EPG (Electronic Program Guide) d'une chaîne en tapant 'epg' suivi du numéro d'identification.
-- **`Télécommande`** : télécommande virtuelle pour piloter le décodeur. Le bouton en bas à gauche permet d'afficher les écrans d'administration du décodeur sur la TV.
-
-
-## Gestion et personnalisation des icônes d'appareil <a id="icons"></a>
-
-Toutes les icônes d'appareil sont initialement stockées par la Livebox et le programme va les chercher une à une, ce qui peut provoquer une certaine latence (par exemple lorsque l'on clique une première fois sur le bouton `Assigner Type...` pour changer le type d'un appareil).
-Pour éviter cette latence, le programme stocke dans un cache local toutes les icônes téléchargées de la Livebox pour pouvoir les retrouver plus rapidement au prochain lancement. Ce cache est contenu dans un répertoire appelé `lbcache_` suivie de la version du firmware de la Livebox (ce qui fait que plusieurs caches peuvent être maintenu si vous accédez à plusieurs Livebox de versions différentes).
-Ce répertoire est créé automatiquement dans [le répertoire de configuration du programme](#configuration).
-
-Il est aussi possible de modifier ces icônes, et aussi de créer de nouveaux types d'appareils avec leur propre icône.
-Une page d'explication dédiée à ces possibilités est disponible [ici](https://github.com/p-dor/LiveboxMonitor/blob/main/docs/CustomIcons.md).
+### Buttons
+- **`Rebuild Cache`**: resets the local cache of channel information and icons.
+- **`Change Channel`**: changes the channel. You can enter a channel number, a channel name (including a partial name), or a channel's EPG (Electronic Program Guide) identifier by typing `epg` followed by the identifier number.
+- **`Remote Control`**: a virtual remote control for operating the decoder. The button at the bottom left displays the decoder administration screens on the TV.
 
 
-## Utiliser les APIs Livebox dans votre propre programme Python <a id="codingguide"></a>
+## Managing and customizing device icons <a id="icons"></a>
 
-L'intégralité des APIs utilisées par le programme pour s'interfacer avec la Livebox sont accessibles via une couche logicielle totalement indépendante du programme lui même.
+All device icons are initially stored on the Livebox, and the program retrieves them one by one. This may cause some delay (for example, the first time you click `Assign Type...` to change a device's type).
+To avoid this delay, the program stores all icons downloaded from the Livebox in a local cache so that they can be retrieved faster the next time it starts. This cache is stored in a directory named `lbcache_` followed by the Livebox firmware version, allowing multiple caches to be kept when you access Liveboxes running different firmware versions.
+This directory is created automatically in the [program configuration directory](#configuration).
 
-Vous pouvez utiliser ces APIs dans votre propre programme Python très facilement en suivant ce petit guide en anglais [ici](https://github.com/p-dor/LiveboxMonitor/blob/main/docs/APICodingGuide.md).
+You can also modify these icons or create new device types with their own icons.
+A dedicated guide explaining these options is available [here](https://github.com/p-dor/LiveboxMonitor/blob/main/docs/CustomIcons.md).
 
-La documentation (générée) des APIs de la Livebox est disponible dans [ce répertoire](https://github.com/p-dor/LiveboxMonitor/tree/main/docs/API%20Documentation). Beaucoup ne sont pas implémentées par le programme mais il est très facile d'en rajouter.
+
+## Using Livebox APIs in your own Python program <a id="codingguide"></a>
+
+All APIs used by the program to communicate with the Livebox are accessible through a software layer that is completely independent of the application itself.
+
+You can easily use these APIs in your own Python program by following this short guide in English [here](https://github.com/p-dor/LiveboxMonitor/blob/main/docs/APICodingGuide.md).
+
+The generated documentation for the Livebox APIs is available in [this directory](https://github.com/p-dor/LiveboxMonitor/tree/main/docs/API%20Documentation). Many APIs are not implemented by the program, but it is easy to add them.
